@@ -88,8 +88,8 @@ Screenshot = mongoose.Schema({
                 'validator': (val) -> val.match(/^[a-z0-9\-\.]+$/)
                 'msg': 'Versions must be lowercase and URL friendly'
 
-        # The size of the viewport width in pixels that this screenshot was
-        # rendered on (may be undefined / null if the default was used)
+        # The size of the viewport width that this screenshot was rendered on,
+        # in pixels (may be undefined / null if the default was used)
         # Note that this is a hint; the actual output width may be larger if
         # the site does not scale correctly and creates a horizontal scrollbar
         # (in general, you want to fix such things as horizontal scrollbars
@@ -122,6 +122,10 @@ Screenshot.method 'serve', (version) ->
 Screenshot.pre 'validate', (next) ->
     if not @isNew
         return next(new Error('Screenshots are immutable'))
+    if not @target
+        return next()  # will fail validation
+    if not @versions or not @versions.length
+        return next(new Error('Screenshots must have at least one version'))
 
     if not @slug
         # Auto generate slug if not present
