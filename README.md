@@ -1,6 +1,6 @@
 # Kepler
 
-Screenshot service
+Screenshot service (server)
 
 ## Dependencies
 
