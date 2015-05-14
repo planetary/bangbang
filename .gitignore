@@ -2,8 +2,9 @@
 .migrate
 .migrate-development
 
-# node libraries
+# npm stuff
 node_modules
+npm-debug.log
 
 # OS noise
 .DS_Store
