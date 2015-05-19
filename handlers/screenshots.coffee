@@ -103,7 +103,7 @@ module.exports = (app) ->
                 'delay': req.screenshot.delay
                 'format': req.screenshot.format
                 'meta': req.screenshot.meta
-                'versions': ver.id for ver in req.screenshots.versions
+                'versions': ver.id for ver in req.screenshot.versions
                 'createdAt': req.project.createdAt
                 'updatedAt': req.project.updatedAt
         )

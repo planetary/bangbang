@@ -140,12 +140,24 @@ Screenshot.pre 'validate', (next) ->
             @slug = @slug.substring(0, 4) + '-' + @slug.substring(4)
 
 
-    Profile.findAsync()
+    Profile.findAsync({})
     .then (profiles) =>
+        # move 'default' profile to the end of the profile list to prevent all
+        # unspecified named profiles from matching 'default' if there's a
+        # better match
+        defaultProfileIndex = -1
+        profiles.some (profile, index) ->
+            if not profile.width and not profile.agent
+                defaultProfileIndex = index
+                return true
+        if defaultProfileIndex isnt -1
+            [defaultProfile] = profiles.splice(defaultProfileIndex, 1)
+            profiles.push(defaultProfile)
+
         for version in @versions
             matched = false
             for profile in profiles
-                if version.name is profile.name or (
+                if version.id is profile.name or (
                     version.width is profile.width and
                     version.agent is profile.agent
                 )
