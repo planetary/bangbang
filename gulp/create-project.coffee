@@ -4,7 +4,7 @@ request = require 'request'
 
 
 module.exports = (gulp, plugins) ->
-    gulp.task 'create-project', 'creates a new project for this app', (cb) ->
+    gulp.task 'create-project', 'creates a new project for this app', (next) ->
         arg = require 'yargs'
             .usage 'gulp create-project [options]'
             .option 'n',
@@ -30,9 +30,9 @@ module.exports = (gulp, plugins) ->
             'gzip': true
         , (err, res, body) ->
             if err
-                return cb(err)
+                return next(err)
             if body.code isnt 'OK'
-                return cb(new Error(body.message))
+                return next(new Error(body.message))
 
             console.log('----------')
             console.log('Project created!')
@@ -40,5 +40,5 @@ module.exports = (gulp, plugins) ->
             console.log("Slug: #{body.data.slug}")
             console.log("API key: #{body.data.key}")
             console.log('----------')
-            cb()
+            next()
         undefined  # sometimes, cofee's implicit return is weird
