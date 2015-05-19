@@ -1,9 +1,9 @@
-{_extend} = require 'util'
+# requies: gulp-nodemon
 path = require 'path'
 
 module.exports = (gulp, plugins) ->
     options =
-        'script': 'app.coffee'
+        'script': 'serve.coffee'
         'ext': 'coffee'
         'watch': [
             path.resolve(__dirname, '../config/*')
@@ -12,31 +12,9 @@ module.exports = (gulp, plugins) ->
             path.resolve(__dirname, '../models/*')
             path.resolve(__dirname, '../services/*')
         ]
+        'env':
+            'NODE_ENV': 'development'
 
-    gulp.task 'serve:dev', 'serves the app in development mode', ->
-        plugins.nodemon(_extend(
-            options,
-            'env':
-                'NODE_ENV': 'development'
-        ))
 
-    gulp.task 'serve:test', 'serves the app in testing mode', ->
-        plugins.nodemon(_extend(
-            options,
-            'env':
-                'NODE_ENV': 'testing'
-        ))
-
-    gulp.task 'serve:stage', 'serves the app in staging mode', ->
-        plugins.nodemon(_extend(
-            options,
-            'env':
-                'NODE_ENV': 'staging'
-        ))
-
-    gulp.task 'serve:prod', 'serves the app in production mode', ->
-        plugins.nodemon(_extend(
-            options,
-            'env':
-                'NODE_ENV': 'production'
-        ))
+    gulp.task 'serve', 'serves the app in development mode', ->
+        plugins.nodemon(options)
