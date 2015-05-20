@@ -24,7 +24,6 @@ load = (folder) ->
 
 # read everything in the current folder (which is the de-facto development
 # environment)
-
 load(__dirname)
 
 
