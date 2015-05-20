@@ -22,7 +22,7 @@ module.exports = (app) ->
                     'width': version.width
                 )
 
-        screenshot = new Screenshot(
+        Screenshot.createAsync(
             'project': req.project.id,
             'build': req.build.number
             'slug': req.body.slug
@@ -32,22 +32,12 @@ module.exports = (app) ->
             'meta': req.body.meta
             'versions': versions
         )
-        screenshot.validateAsync()
-        .then ->
-            # data looks okay; perform request in background...
-            screenshot.saveAsync()
-            .then ->
-                console.log('Success')
-            .catch (err) ->
-                console.error(err.stack)
-
-            # ... and inform the client that we'll do our best effort here
-            res.status(202).send(
+        .then (screenshot) ->
+            res.status(200).send(
                 'code': 'OK'
-                'message': 'Accepted'
+                'message': 'Created'
                 'data': screenshot.slug
             )
-
         .catch Error.ValidationError, (err) ->
             res.status(400).send(
                 'code': 'VALIDATION'
