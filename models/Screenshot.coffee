@@ -75,22 +75,31 @@ Screenshot = mongoose.Schema({
     # api specified metadata, if any
     'meta': mongoose.Schema.Types.Mixed
 
-    # All the versions available for this screenshot
-    'versions': [{
-        'id':
-            # Either the name of the profile, or the sha1 hash of
-            # width + agent
+    # all the profiles available for this screenshot
+    'profiles': [{
+        'slug':
+            # Either the name of the profile, or the sha1 hash of width + height + agent
             'type': String
             'required': true
             'validate':
                 'validator': (val) -> val.match(/^[a-z0-9\-\.]+$/)
-                'msg': 'Versions must be lowercase and URL friendly'
+                'msg': 'Profiles must be lowercase and URL friendly'
 
         # the width of the viewport this screenshot was rendered on, in pixels. Note that this is a
         # hint; the actual screenshot width may be larger if the site does not scale and creates a
         # horizontal scrollbar (in general, you want to fix such things as horizontal scrollbars
         # cause a bad user experience)
-        'width': Number
+        'width':
+            'type': Number
+            'required': true
+
+        # the height of the viewport this screenshot was rendered on, in pixels. Note that this is
+        # a hint; the actual output width may be larger if the site does not scale correctly and
+        # creates a horizontal scrollbar (in general, you want to fix such things as horizontal
+        # scrollbars cause a bad user experience)
+        'height':
+            'type': Number
+            'required': true
 
         # the user agent used to generate this screenshot (may be undefined / null if the default
         # was used)
@@ -105,14 +114,14 @@ Screenshot = mongoose.Schema({
 })
 
 
-Screenshot.method 'key', (version) ->
-    if typeof version is 'object'
-        version = version.id
-    "#{@project.toString()}-#{@build}-#{@slug}-#{version}"
+Screenshot.method 'key', (profile) ->
+    if typeof profile is 'object'
+        profile = profile.slug
+    "#{@project.toString()}-#{@build}-#{@slug}-#{profile}"
 
 
-Screenshot.method 'serve', (version) ->
-    "https://#{config.aws.bucket}.s3.amazonaws.com/#{@key(version)}"
+Screenshot.method 'serve', (profile) ->
+    "https://#{config.aws.bucket}.s3.amazonaws.com/#{@key(profile)}"
 
 
 Screenshot.pre 'validate', (next) ->
@@ -120,11 +129,11 @@ Screenshot.pre 'validate', (next) ->
         return next(new Error('Screenshots are immutable'))
     if not @target
         return next()  # will fail validation
-    if not @versions or not @versions.length
-        return next(new Error('Screenshots must have at least one version'))
+    if not @profiles or not @profiles.length
+        return next(new Error('Screenshots must have at least one profile'))
 
     if not @slug
-        # Auto generate slug if not present
+        # auto generate slug if not present
         hash = crypto.createHash('sha1')
         hash.update(@target)
         @slug = hash.digest('base64').replace('+', '-').replace('/', '.')
@@ -141,31 +150,37 @@ Screenshot.pre 'validate', (next) ->
         # move 'default' profile to the end of the profile list to prevent all unspecified named
         # profiles from matching 'default' if there's a better match
         defaultProfileIndex = -1
-        profiles.some (profile, index) ->
+        builtinProfiles.some (profile, index) ->
             if not profile.width and not profile.agent
                 defaultProfileIndex = index
                 return true
         if defaultProfileIndex isnt -1
-            [defaultProfile] = profiles.splice(defaultProfileIndex, 1)
-            profiles.push(defaultProfile)
+            [defaultProfile] = builtinProfiles.splice(defaultProfileIndex, 1)
+            builtinProfiles.push(defaultProfile)
 
-        for version in @versions
+        for profile in @profiles
             matched = false
-            for profile in profiles
-                if version.id is profile.name or (
-                    version.width is profile.width and
-                    version.agent is profile.agent
+            for builtinProfile in builtinProfiles
+                if profile.slug is builtinProfile.slug or (
+                    profile.width is builtinProfile.width and
+                    profile.height is builtinProfile.height and
+                    profile.agent is builtinProfile.agent
                 )
-                    version.id = profile.name
-                    version.width = profile.width
-                    version.agent = profile.agent
+                    profile.slug = builtinProfile.slug
+                    profile.width = builtinProfile.width
+                    profile.agent = builtinProfile.agent
                     matched = true
 
             if not matched
                 # auto-generate profile id if not present or invalid
                 hash = crypto.createHash('sha1')
-                hash.update((version.width or '') + (version.agent or ''))
-                version.id = hash.digest('base64')
+                hash.update([
+                    (profile.width or ''),
+                    (profile.height or ''),
+                    (profile.agent or '')
+                ].join(''))
+
+                profile.slug = hash.digest('base64')
                     .replace('+', '-')
                     .replace('/', '.')
                     .toLowerCase()
@@ -180,12 +195,12 @@ Screenshot.pre 'save', (next) ->
         @createdAt = @updatedAt
 
     requests = []
-    for version in @versions
+    for profile in @profiles
         request =
-            'key': @key(version)
+            'key': @key(profile)
             'target': @target
-            'width': version.width
-            'agent': version.agent
+            'width': profile.width
+            'agent': profile.agent
             'delay': @delay
             'format': @format
         requests.push(capture(request))
@@ -200,8 +215,8 @@ Screenshot.pre 'delete', (next) ->
         'Bucket': config.aws.bucket
         'Delete':
             'Objects': [{
-                'Key': @key(version)
-            } for version in @versions]
+                'Key': @key(profile)
+            } for profile in @profiles]
     }, next)
 
 

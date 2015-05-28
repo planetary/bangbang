@@ -5,21 +5,20 @@
 
 module.exports = (app) ->
     app.post '/api/projects/:project/:build', (req, res) ->
-        # Take screenshots of `target` after `delay` milliseconds, using the
-        # `versions` profiles as part of `build` of `project`, storing as
-        # `slug` or the sha1 of `target` if `slug` is not  provided, optionally
-        # binding it with `meta`. Each member of `versions` must be either the
-        # name of a well-known profile or a {width, agent} pair.
-        versions = []
-        for version in req.body.versions
-            if typeof version is 'string'
-                versions.push(
-                    'id': version
+        # Take screenshots of `target` after `delay` milliseconds, as part of `build` of `project`,
+        # using the `profiles` profile list and storing as `slug` or the sha1 of `target` if `slug`
+        # is not provided. Each member of `profiles` must be either the name of a well-known
+        # profile or a {width, height, agent} pair.
+        profiles = []
+        for profile in req.body.profiles
+            if typeof profile is 'string'
+                profiles.push(
+                    'id': profile
                 )
             else
-                versions.push(
-                    'agent': version.agent
-                    'width': version.width
+                profiles.push(
+                    'agent': profile.agent
+                    'width': profile.width
                 )
 
         Screenshot.createAsync(
@@ -30,7 +29,7 @@ module.exports = (app) ->
             'delay': req.body.delay or 0
             'format': req.body.format or 'jpeg'
             'meta': req.body.meta
-            'versions': versions
+            'profiles': profiles
         )
         .then (screenshot) ->
             res.status(200).send(
@@ -53,26 +52,25 @@ module.exports = (app) ->
 
 
     ###app.get '/api/projects/:project/:screenshot', (req, res) ->
-        # Returns a list of versions in which a screenshot is available
-        versions = {}
+        # Returns a list of profiles in which a screenshot is available
+        profiles = {}
         for screenshot in req.screenshots
-            for version in screenshot.versions
-                versions[version.id] = true
+            for profile in screenshot.profiles
+                profiles[profile.slug] = true
 
         res.status(200).send(
             'code': 'OK'
             'message': 'Success'
-            'data': version for version of versions
+            'data': profile for profile of profiles
         )
 
 
-    app.get '/api/projects/:project/:screenshot/:version', (req, res) ->
-        # Returns a list of builds in which a particular version of a
-        # screenshot is available
+    app.get '/api/projects/:project/:screenshot/:profile', (req, res) ->
+        # Returns a list of builds in which a particular profile of a screenshot is available
         builds = {}
         for screenshot in req.screenshots
-            for version in screenshot.versions
-                if version.id is req.params.version
+            for profile in screenshot.profiles
+                if profile.slug is req.params.profile
                     builds[screenshot.build] = true
 
         res.status(200).send(
@@ -83,8 +81,8 @@ module.exports = (app) ->
 
 
     app.get '/api/projects/:project/:build/:screenshot', (req, res) ->
-        # Returns the metadata associated with a screenshot in a particular
-        # build, including the available versions
+        # Returns the metadata associated with a screenshot in a particular build, including the
+        # available profiles
         res.status(200).send(
             'code': 'OK'
             'message': 'Success'
@@ -93,15 +91,14 @@ module.exports = (app) ->
                 'delay': req.screenshot.delay
                 'format': req.screenshot.format
                 'meta': req.screenshot.meta
-                'versions': ver.id for ver in req.screenshot.versions
+                'profiles': ver.id for ver in req.screenshot.profiles
                 'createdAt': req.project.createdAt
                 'updatedAt': req.project.updatedAt
         )
 
 
     app.put '/api/projects/:project/:build/:screenshot', (req, res) ->
-        # Updates the metadata associated with this screenshot in this
-        # particular build
+        # Updates the metadata associated with this screenshot in this particular build
         req.screenshot.updateAsync(
             'meta': req.body.meta
         )
@@ -124,24 +121,23 @@ module.exports = (app) ->
             )
 
 
-    app.get '/api/projects/:project/:build/:screenshot/:version', (req, res) ->
-        # Returns the metadata associated with a particular version of a
-        # particular build of a screenshot, including the S3 URL needed to
-        # display the resource
-        for version in req.screenshot.versions
-            if version.id is req.params.version
+    app.get '/api/projects/:project/:build/:screenshot/:profile', (req, res) ->
+        # Returns the metadata associated with a particular profile of a particular build of a
+        # screenshot, including the S3 URL needed to display the resource
+        for profile in req.screenshot.profiles
+            if profile.slug is req.params.profile
                 return res.status(200).send(
                     'code': 'OK'
                     'message': 'Success'
                     'data':
-                        'width': version.width
-                        'agent': version.agent
-                        'url': req.screenshot.serve(version)
+                        'width': profile.width
+                        'agent': profile.agent
+                        'url': req.screenshot.serve(profile)
                 )
 
-        # version not found in this build
+        # profile not found in this build
         res.status(404).send(
             'code': 'NOT_FOUND'
             'message': "Screenshot #{req.screenshot.slug} does not have a
-                        #{req.params.version} version"
+                        #{req.params.profile} profile"
         )

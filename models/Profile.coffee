@@ -4,12 +4,18 @@ mongoose = require 'mongoose'
 
 
 Profile = mongoose.Schema({
-    'name':
+    'slug':
         'type': String
         'required': true
         'unique': true
 
-    'width': Number
+    'width':
+        'type': Number
+        'required': true
+    'height':
+        'type': Number
+        'required': true
+
     'agent': String
 
     'createdAt': Date
