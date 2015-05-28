@@ -17,7 +17,7 @@ module.exports = (gulp, plugins) ->
 
     gulp.task 'lint:coffeescript', 'lints all project coffeescript files', ->
         gulp
-            .src(paths.coffeescript)
+            .src(paths)
             .pipe(plugins.coffeelint())
             .pipe(plugins.coffeelint.reporter())
             .pipe(plugins.coffeelint.reporter('failOnWarning'))
