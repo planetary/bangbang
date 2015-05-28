@@ -1,4 +1,3 @@
-db = require '../db'
 {Build, Project} = require '../../models'
 
 expect = require 'expect'
@@ -6,10 +5,6 @@ mongoose = require 'mongoose'
 
 
 describe 'Project', ->
-    before(db.connect)
-    beforeEach(db.clean)
-    after(db.disconnect)
-
     it 'should be a mongoose model', ->
         expect(Project::).toBeA(mongoose.Model)
 

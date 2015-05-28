@@ -1,4 +1,3 @@
-db = require '../db'
 {Build, Project, Screenshot} = require '../../models'
 
 Promise = require 'bluebird'
@@ -7,10 +6,6 @@ mongoose = require 'mongoose'
 
 
 describe 'Build', ->
-    before(db.connect)
-    beforeEach(db.clean)
-    after(db.disconnect)
-
     it 'should be a mongoose model', ->
         expect(Build::).toBeA(mongoose.Model)
 
