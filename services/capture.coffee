@@ -38,7 +38,7 @@ queue = async.queue((request, next) ->
             ctx.phantom.on 'close', (code) ->
                 clearTimeout(timer)
                 if code
-                    next(new Error("Child process crashed with #{code}"))
+                    return next(new Error("Child process crashed with #{code}"))
                 next()
         ]
         'upload': ['phantom', (next, ctx) ->
