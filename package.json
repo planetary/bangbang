@@ -19,6 +19,7 @@
     "coffee-script": "^1.9.2",
     "deep-extend": "^0.4.0",
     "env-test": "^1.0.0",
+    "expect": "^1.6.0",
     "express": "^4.12.3",
     "gulp": "^3.8.11",
     "gulp-coffeelint": "^0.5.0",
