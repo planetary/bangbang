@@ -18,19 +18,18 @@ s3 = new aws.S3(
 
 Screenshot = mongoose.Schema({
     'project':
-        # The project this group of screenshots belongs to
+        # the project this group of screenshots belongs to
         'type': mongoose.Schema.Types.ObjectId
         'ref': 'Project'
         'required': true
 
     'build':
-        # The build this group of screenshots were taken in
+        # the build this group of screenshots were taken in
         'type': Number
         'required': true
 
     'slug':
-        # The name of this group of screenshots; if not set by the user, the
-        # sha1 of the target will be used
+        # the name of this group of screenshots; if not set, the sha1 of `target` will be used
         'type': String
         'required': true
         'validate': [
@@ -42,13 +41,12 @@ Screenshot = mongoose.Schema({
         ]
 
     'target':
-        # The URL of the page that is rendered in this group of screenshots
+        # the URL of the page that is rendered in this group of screenshots
         'type': String
         'required': true
         'validate':
             'validator': (val) ->
-                # this is a bit of a joke and not relied upon, but may prevent
-                # some rather common mistakes
+                # this is a bit of a joke, but may prevent some rather common mistakes
                 pieces = url.parse(val)
                 if pieces.protocol not in ['http:', 'https:']
                     return false
@@ -61,15 +59,15 @@ Screenshot = mongoose.Schema({
             'msg': 'Only valid non-loopback HTTP(S) urls are supported'
 
     'delay':
-        # The amount of time given to the site to finish rendering before
-        # snapping screenshots in this group, in milliseconds.
+        # the amount of time given to the site to finish rendering before snapping screenshots in
+        # this group, in milliseconds.
         'type': Number
         'required': true
         'min': 0
         'max': 5000
 
     'format':
-        # The format the screenshots in this group were saved in
+        # the format the screenshots in this group were saved in
         'type': String
         'required': true
         'enum': ['png', 'gif', 'jpeg']
@@ -88,16 +86,14 @@ Screenshot = mongoose.Schema({
                 'validator': (val) -> val.match(/^[a-z0-9\-\.]+$/)
                 'msg': 'Versions must be lowercase and URL friendly'
 
-        # The size of the viewport width that this screenshot was rendered on,
-        # in pixels (may be undefined / null if the default was used)
-        # Note that this is a hint; the actual output width may be larger if
-        # the site does not scale correctly and creates a horizontal scrollbar
-        # (in general, you want to fix such things as horizontal scrollbars
+        # the width of the viewport this screenshot was rendered on, in pixels. Note that this is a
+        # hint; the actual screenshot width may be larger if the site does not scale and creates a
+        # horizontal scrollbar (in general, you want to fix such things as horizontal scrollbars
         # cause a bad user experience)
         'width': Number
 
-        # The user agent used to generate this screenshot (may be undefined /
-        # null if the default was used)
+        # the user agent used to generate this screenshot (may be undefined / null if the default
+        # was used)
         'agent': String
 
         # say no to ObjectIds!
@@ -142,9 +138,8 @@ Screenshot.pre 'validate', (next) ->
 
     Profile.findAsync({})
     .then (profiles) =>
-        # move 'default' profile to the end of the profile list to prevent all
-        # unspecified named profiles from matching 'default' if there's a
-        # better match
+        # move 'default' profile to the end of the profile list to prevent all unspecified named
+        # profiles from matching 'default' if there's a better match
         defaultProfileIndex = -1
         profiles.some (profile, index) ->
             if not profile.width and not profile.agent
@@ -167,7 +162,7 @@ Screenshot.pre 'validate', (next) ->
                     matched = true
 
             if not matched
-                # Auto-generate version id if not present or invalid
+                # auto-generate profile id if not present or invalid
                 hash = crypto.createHash('sha1')
                 hash.update((version.width or '') + (version.agent or ''))
                 version.id = hash.digest('base64')

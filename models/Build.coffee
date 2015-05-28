@@ -6,13 +6,13 @@ mongoose = require 'mongoose'
 
 Build = mongoose.Schema({
     'project':
-        # The project this build belongs to
+        # the project this build belongs to
         'type': mongoose.Schema.Types.ObjectId
         'ref': 'Project'
         'required': true
 
     'number':
-        # The build number (auto-incrementing)
+        # the build number (auto-incrementing)
         'type': Number
         'required': true
 
@@ -32,14 +32,14 @@ Build.pre 'save', (next) ->
 
 
 Build.pre 'remove', (next) ->
-    # Delete all screenshots before deleting this build
+    # delete all screenshots before deleting this build
     Screenshot.findAsync(
         'project': @project
         'build': @number
     )
     .then (screenshots) ->
-        shot.removeAsync() for shot in screenshots
-    .then ->
+        screenshot.removeAsync() for screenshot in screenshots
+    .spread ->
         next()
     .catch (err) ->
         next(err)

@@ -15,8 +15,8 @@ s3 = new aws.S3(
 
 
 queue = async.queue((request, next) ->
-    # captures a screenshot of `request.url` and uploads it directly to the
-    # pre-configured AWS bucket under `request.key`. Concurrency-limited.
+    # captures a screenshot of `request.url` and uploads it directly to the pre-configured AWS
+    # bucket under `request.key`. Concurrency-limited.
     async.auto({
         'phantom': (next) ->
             # spawn child process and feed it input
@@ -29,8 +29,7 @@ queue = async.queue((request, next) ->
 
             next(null, phantom)
         'wait': ['phantom', (next, ctx) ->
-            # wait for the process to end, helping it if necessary
-            # http://bit.ly/1B4ToFb
+            # wait for the process to end, helping it if necessary http://bit.ly/1B4ToFb
             timer = setTimeout(
                 -> ctx.phantom.kill(9)
                 config.screenshots.timeout
@@ -49,8 +48,7 @@ queue = async.queue((request, next) ->
                 'Key': request.key
                 'Body': ctx.phantom.stdout.pipe(base64.decode())
                 'ContentType': "image/#{request.format}"
-                'StorageClass': if config.aws.reliable then 'STANDARD'\
-                                else 'REDUCED_REDUNDANCY'
+                'StorageClass': if config.aws.reliable then 'STANDARD' else 'REDUCED_REDUNDANCY'
             }, next)
         ]
     }, next)

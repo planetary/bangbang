@@ -39,8 +39,7 @@ module.exports = (app) ->
 
 
     app.get '/api/projects/:project', (req, res) ->
-        # Returns a project's metadata together with a list of all builds and
-        # available screenshots
+        # Returns a project's metadata together with a list of all builds and available screenshots
         Promise.try -> [
             Build.findAsync(
                 'project': req.project.id
@@ -71,8 +70,8 @@ module.exports = (app) ->
 
 
     app.put '/api/projects/:project', (req, res) ->
-        # Updates an existing project's metadata, returning its slug (currently
-        # it's always the same but it might be modified in the future)
+        # Updates an existing project's metadata, returning its slug (currently it's always the
+        # same but it might be modified in the future)
         req.project.name = req.body.name
         req.project.meta = req.body.meta
         req.project.saveAsync()

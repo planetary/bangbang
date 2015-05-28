@@ -21,7 +21,7 @@ Project = mongoose.Schema({
         'required': true
 
     'head':
-        # The most recent build number
+        # the most recent build number
         'type': Number
         'default': 0
 
@@ -71,7 +71,7 @@ Project.pre 'save', (next) ->
 
 
 Project.pre 'remove', (next) ->
-    # Delete all builds before deleting this project
+    # delete all builds before deleting this project
     Build.findAsync(
         'project': @id
     )

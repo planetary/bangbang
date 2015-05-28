@@ -7,9 +7,8 @@ config = {}
 
 
 load = (folder) ->
-    # reads all the non-index files in `folder` and stores their values into
-    # the config namespace identified by their basename, merging with any
-    # existing data and overriding on conflict
+    # reads all the non-index files in `folder` and stores their values into the config namespace
+    # identified by their basename, merging with any existing data and overriding on conflict
     for file in fs.readdirSync(folder)
         stat = fs.statSync(path.join(folder, file))
         if stat.isDirectory()
@@ -22,14 +21,12 @@ load = (folder) ->
             config[file] = extend(oldData, newData)
 
 
-# read everything in the current folder (which is the de-facto development
-# environment)
+# read everything in the current folder (which is the de-facto development environment)
 load(__dirname)
 
 
-# if the NODE_ENV shell variable exists and points to a valid subfolder,
-# attempt to overwrite any global configuration options with their
-# per-environment values
+# if the NODE_ENV shell variable exists and points to a valid subfolder, attempt to overwrite any
+# global configuration options with their per-environment values
 if process.env.NODE_ENV and process.env.NODE_ENV isnt 'development'
     envName = process.env.NODE_ENV
     envPath = path.join(__dirname, envName)

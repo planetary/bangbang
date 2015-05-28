@@ -1,6 +1,6 @@
-# exports all exported symbols of all sub-modules; if a particular sub-module
-# exports a function, class or any other object with a prototype, it is bound
-# directly to this model's symbol table, using the module's basename as a key
+# exports all exported symbols of all sub-modules; if a particular sub-module exports a function,
+# class or any other object with a prototype, it is bound directly to this model's symbol table,
+# using the module's basename as a key
 #
 # TL;DR: use this as index.coffee in all `models` subfolders and you can do
 # {User, Article, Comment} = require '../models'
@@ -30,8 +30,7 @@ for file in fs.readdirSync(__dirname)
         # subfolder; assume submodule
         update(file)
     else
-        # subfile; only load coffee and js files to avoid stuff like
-        # .gitkeep, coffeelint.json, etc.
+        # subfile; only load coffee and js files to avoid .gitkeep, coffeelint.json, etc.
         [file, extension] = file.split(".", 2)
         if file isnt "index" and extension in ["coffee", "js"]
             update(file, module)

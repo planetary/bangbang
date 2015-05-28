@@ -26,7 +26,7 @@ for env in ['development', 'testing', 'staging', 'production']
 # load and register gulp tasks
 gulp = require('gulp-help')(require('gulp'))
 tasks = require('include-all')({
-    'dirname': __dirname,
+    'dirname': __dirname
     'filter': /(.+)\.(coffee|litcoffee|js|es6})$/
     'dontLoad': true
 })

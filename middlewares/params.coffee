@@ -5,8 +5,7 @@ Promise = require 'bluebird'
 
 module.exports = (app) ->
     app.param 'build', (req, res, next, value) ->
-        # populates `app.build`; expects `app.project` to be populated by a
-        # previous middleware
+        # populates `app.build`; expects `app.project` to be populated by a previous middleware
         if not value.match(/^[0-9]+$/)
             # builds must be numbers
             return next('route')
@@ -57,13 +56,13 @@ module.exports = (app) ->
 
 
     app.param 'screenshot', (req, res, next, value) ->
-        # populates either `app.screenshot` or `app.screenshots`, depending on
-        # whether `app.build` was populated by a previous middleware; expects
-        # `app.project` to be populated by a previous middleware
+        # populates either `app.screenshot` or `app.screenshots`, depending on whether `app.build`
+        # was populated by a previous middleware; expects `app.project` to be populated by a
+        # previous middleware
 
         if not value.match(/^[0-9a-z-_]*$/) or not value.match(/[^0-9]/)
-            # screenshots must be lowercase, url friendly and must contain at
-            # least one non-alphanumeric character
+            # screenshots must be lowercase, url friendly and must contain at least one
+            # non-alphanumeric character
             return next('route')
 
         Promise.try ->
