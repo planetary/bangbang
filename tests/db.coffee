@@ -14,7 +14,6 @@ module.exports.connect = (next) ->
 
 module.exports.disconnect = (next) ->
     if mongoose.connection.readyState isnt 0
-        mongoose.connection.readyState = 0
         mongoose.connection.close()
     next()
 
