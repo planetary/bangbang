@@ -77,7 +77,7 @@ Project.pre 'remove', (next) ->
     )
     .then (builds) ->
         build.removeAsync() for build in builds
-    .then ->
+    .spread ->
         next()
     .catch (err) ->
         next(err)
