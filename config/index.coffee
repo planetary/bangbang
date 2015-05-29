@@ -17,7 +17,7 @@ load = (folder) ->
         [file, extension] = file.split('.', 2)
         if file isnt 'index' and extension in ['coffee', 'js', 'json']
             oldData = config[file] or {}
-            newData = require('./' + file)
+            newData = require('./' + path.relative(__dirname, path.join(folder, file)))
             config[file] = extend(oldData, newData)
 
 
