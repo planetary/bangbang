@@ -1,6 +1,4 @@
 --require coffee-script/register
 --compilers coffee:coffee-script
 
---require env-test
-
 tests/index.coffee

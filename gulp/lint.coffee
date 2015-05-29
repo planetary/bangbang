@@ -1,5 +1,5 @@
 module.exports = (gulp, plugins) ->
     gulp.task 'lint', 'lints all project files', [
-        # add your linters here
+        # Add your lint tasks here (must be prefixed with lint:)
         'lint:coffeescript'
     ]

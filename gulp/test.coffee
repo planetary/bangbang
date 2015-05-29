@@ -1,4 +1,6 @@
-# requies: gulp-mocha
+###
+npm install --save gulp-mocha
+###
 path = require 'path'
 
 module.exports = (gulp, plugins) ->

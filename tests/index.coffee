@@ -1,3 +1,4 @@
+process.env.NODE_ENV = 'testing'
 config = require '../config'
 
 Promise = require 'bluebird'
