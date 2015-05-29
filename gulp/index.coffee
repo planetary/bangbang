@@ -1,3 +1,11 @@
+###
+npm install --save include-all \
+                   gulp \
+                   gulp-help \
+                   gulp-load-plugins
+###
+
+
 # load plugins
 plugins = require('gulp-load-plugins')({
     # the glob to search for
