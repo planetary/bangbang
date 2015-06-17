@@ -2,6 +2,9 @@
 .migrate
 .migrate-development
 
+# compiled resources
+build
+
 # npm stuff
 node_modules
 npm-debug.log

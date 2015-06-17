@@ -4,6 +4,7 @@ parser = require 'body-parser'
 
 # init express & body parser
 app = express()
+app.use(express.static('./build'))
 app.use(parser.json())
 app.use(morgan('dev'))
 

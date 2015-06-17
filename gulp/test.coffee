@@ -1,6 +1,3 @@
-###
-npm install --save gulp-mocha
-###
 path = require 'path'
 
 
