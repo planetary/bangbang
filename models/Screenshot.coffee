@@ -31,11 +31,12 @@ Screenshot = mongoose.Schema({
     'slug':
         # the name of this group of screenshots; if not set, the sha1 of `target` will be used
         'type': String
-        'required': true
         'validate': [
+            'type': 'base64'
             'validator': (val) -> val.match(/^[a-z0-9\-\.]+$/)
             'msg': 'Slugs must be lowercase and URL friendly'
 
+            'type': 'alpha'
             'validator': (val) -> val.match(/[^0-9]$/)
             'msg': 'Slugs must contain at least one non-numeric character'
         ]
@@ -45,6 +46,7 @@ Screenshot = mongoose.Schema({
         'type': String
         'required': true
         'validate':
+            'type': 'loopback'
             'validator': (val) ->
                 # this is a bit of a joke, but may prevent some rather common mistakes
                 pieces = url.parse(val)
@@ -76,38 +78,52 @@ Screenshot = mongoose.Schema({
     'meta': mongoose.Schema.Types.Mixed
 
     # all the profiles available for this screenshot
-    'profiles': [{
-        'slug':
+    'profiles':
+        'required': true
+        'type': [
             # Either the name of the profile, or the sha1 hash of width + height + agent
-            'type': String
-            'required': true
-            'validate':
-                'validator': (val) -> val.match(/^[a-z0-9\-\.]+$/)
-                'msg': 'Profiles must be lowercase and URL friendly'
+            'slug':
+                'type': String
+                'required': true
+                'lowercase': true
+                'minlength': 4
+                'maxlength': 100
+                'match': /^[a-z0-9\-\.]+$/
 
-        # the width of the viewport this screenshot was rendered on, in pixels. Note that this is a
-        # hint; the actual screenshot width may be larger if the site does not scale and creates a
-        # horizontal scrollbar (in general, you want to fix such things as horizontal scrollbars
-        # cause a bad user experience)
-        'width':
-            'type': Number
-            'required': true
+            # the width of the viewport this screenshot was rendered on, in pixels. Note that this
+            # is a hint; the actual screenshot width may be larger if the site does not scale and
+            # creates a horizontal scrollbar (in general, you want to fix such things as horizontal
+            # scrollbars cause a bad user experience)
+            'width':
+                'type': Number
+                'required': true
+                'min': 128
 
-        # the height of the viewport this screenshot was rendered on, in pixels. Note that this is
-        # a hint; the actual output width may be larger if the site does not scale correctly and
-        # creates a horizontal scrollbar (in general, you want to fix such things as horizontal
-        # scrollbars cause a bad user experience)
-        'height':
-            'type': Number
-            'required': true
+            # the height of the viewport this screenshot was rendered on, in pixels. Note that this
+            # is a hint; the actual output width may be larger if the site does not scale correctly
+            # and creates a horizontal scrollbar (in general, you want to fix such things as
+            # horizontal scrollbars cause a bad user experience)
+            'height':
+                'type': Number
+                'required': true
+                'min': 128
 
-        # the user agent used to generate this screenshot (may be undefined / null if the default
-        # was used)
-        'agent': String
+            # the user agent used to generate this screenshot (may be undefined / null if the
+            # default was used)
+            'agent': String
 
-        # say no to ObjectIds!
-        '_id': false
-    }]
+            # say no to ObjectIds!
+            '_id': false
+        ]
+        'validate':
+            'type': 'unique'
+            'validator': (values, next) ->
+                profiles = {}
+                for value in values
+                    if profiles[value.slug]
+                        return next(false)
+
+                next(true)
 
     'createdAt': Date
     'updatedAt': Date
@@ -125,39 +141,18 @@ Screenshot.method 'serve', (profile) ->
 
 
 Screenshot.pre 'validate', (next) ->
-    if not @isNew
-        return next(new Error('Screenshots are immutable'))
-    if not @target
-        return next()  # will fail validation
-    if not @profiles or not @profiles.length
-        return next(new Error('Screenshots must have at least one profile'))
-
-    if not @slug
-        # auto generate slug if not present
-        hash = crypto.createHash('sha1')
-        hash.update(@target)
-        @slug = hash.digest('base64').replace('+', '-').replace('/', '.')
-            .toLowerCase()
-            .substring(0, 8)
-
-        if @slug.match(/^[0-9]+$/)
-            # one in a million chance; avoid collision with build numbers
-            @slug = @slug.substring(0, 4) + '-' + @slug.substring(4)
-
+    if not (@profiles? or @profiles.length)
+        return next()  # shortcircuit
 
     Profile.findAsync({})
-    .then (profiles) =>
-        # move 'default' profile to the end of the profile list to prevent all unspecified named
-        # profiles from matching 'default' if there's a better match
-        defaultProfileIndex = -1
-        builtinProfiles.some (profile, index) ->
-            if not profile.width and not profile.agent
-                defaultProfileIndex = index
-                return true
-        if defaultProfileIndex isnt -1
-            [defaultProfile] = builtinProfiles.splice(defaultProfileIndex, 1)
-            builtinProfiles.push(defaultProfile)
-
+    .then (builtinProfiles) =>
+        # matches requested profiles against builtin profiles:
+        # * if the requested profile has a slug that matches the slug of a builtin profile, then
+        #   any other requested properties are discarded in favor of the builtin profile's settings
+        # * if the requested profile's settings match the settings of a builtin profile, its slug
+        #   is updated to the slug of the matching builtin profile
+        # * in every other case, the slug is generated by hashing the profile settings; NOTE THAT
+        #   IN THIS CASE, BOTH WIDTH AND HEIGHT MUST BE SPECIFIED!
         for profile in @profiles
             matched = false
             for builtinProfile in builtinProfiles
@@ -175,15 +170,14 @@ Screenshot.pre 'validate', (next) ->
                 # auto-generate profile id if not present or invalid
                 hash = crypto.createHash('sha1')
                 hash.update([
-                    (profile.width or ''),
-                    (profile.height or ''),
-                    (profile.agent or '')
+                    profile.width
+                    profile.height
+                    profile.agent or ''
                 ].join(''))
 
                 profile.slug = hash.digest('base64')
                     .replace('+', '-')
                     .replace('/', '.')
-                    .toLowerCase()
                     .substring(0, 8)
 
         next()
@@ -194,6 +188,19 @@ Screenshot.pre 'save', (next) ->
     if @isNew
         @createdAt = @updatedAt
 
+    if not @slug
+        # if not present, auto-generate slug from the target url
+        hash = crypto.createHash('sha1')
+        hash.update(@target)
+        @slug = hash.digest('base64').replace('+', '-').replace('/', '.')
+            .toLowerCase()
+            .substring(0, 8)
+
+        if @slug.match(/^[0-9]+$/)
+            # one in a million chance; avoid collision with build numbers
+            @slug = @slug.substring(0, 4) + '-' + @slug.substring(4)
+
+    # create and wait for screenshot capture tasks for every registered profile
     requests = []
     for profile in @profiles
         request =
@@ -221,6 +228,7 @@ Screenshot.pre 'delete', (next) ->
 
 
 Screenshot.index({'project': 1, 'slug': 1, 'build': 1}, {'unique': true})
+Screenshot.index({'project': 1, 'profiles.slug': 1})
 
 
 module.exports = Model = assimilate mongoose.model('Screenshot', Screenshot)

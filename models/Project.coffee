@@ -9,16 +9,17 @@ Project = mongoose.Schema({
     'name':
         'type': String
         'required': true
+        'maxlength': 100
 
     'slug':
         'type': String
-        'required': true
         'unique': true
+        'lowercase': true
+        'maxlength': 100
 
     'key':
         # API key for this project
         'type': String
-        'required': true
 
     'head':
         # the most recent build number
@@ -33,31 +34,6 @@ Project = mongoose.Schema({
 })
 
 
-Project.pre 'validate', (next) ->
-    if @isNew
-        @regenerate()
-
-    base = @name.toLowerCase().replace(/[^a-z0-9]+/g, '-')
-    if not @slug
-        @slug = base
-
-    trySlug = (model) =>
-        Model.findOneAsync(
-            'slug': @slug
-        )
-        .then (project) =>
-            if project and project.id isnt @id
-                # already exists; generate a new suffix
-                rand = Math.floor(1679616 * Math.random())
-                @slug = base + '-' + rand.toString(36)
-                trySlug()
-
-    # enforce slug uniqueness
-    trySlug()
-    .then -> next()
-    .catch (err) -> next(err)
-
-
 Project.method 'regenerate', ->
     # generates a new API key
     @key = @key = uuid.v4().replace(/-/g, '')
@@ -67,14 +43,30 @@ Project.pre 'save', (next) ->
     @updatedAt = new Date()
     if @isNew
         @createdAt = @updatedAt
-    next()
+        @regenerate()
+
+    # if a slug was provided, use it as a starting point; else use the project's name as one
+    # in both cases, convert to lowercase and remove any non-alphanum characters before continuing
+    @slug = base = (if @slug then @slug else @name).toLowerCase().replace(/[^a-z0-9]+/g, '-')
+
+    # enforce slug uniqueness by appending a unique suffix if the requested one already exists
+    trySlug = (model) =>
+        Model.findOneAsync('slug': @slug)
+        .then (project) =>
+            if project and project.id isnt @id
+                # already exists; try a new random suffix
+                rand = Math.floor(1679616 * Math.random())
+                @slug = base + '-' + rand.toString(36)
+                trySlug()
+
+    trySlug()
+    .then -> next()
+    .catch (err) -> next(err)
 
 
 Project.pre 'remove', (next) ->
     # delete all builds before deleting this project
-    Build.findAsync(
-        'project': @id
-    )
+    Build.findAsync('project': @id)
     .then (builds) ->
         build.removeAsync() for build in builds
     .spread ->

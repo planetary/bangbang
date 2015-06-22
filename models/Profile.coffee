@@ -7,16 +7,24 @@ Profile = mongoose.Schema({
     'slug':
         'type': String
         'required': true
+        'lowercase': true
         'unique': true
+        'minlength': 4
+        'maxlength': 100
+        'match': /^[a-z0-9\-\.]+$/
 
     'width':
         'type': Number
         'required': true
+        'min': 128
+
     'height':
         'type': Number
         'required': true
+        'min': 128
 
-    'agent': String
+    'agent':
+        'type': String
 
     'createdAt': Date
     'updatedAt': Date
