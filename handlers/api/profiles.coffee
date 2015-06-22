@@ -76,7 +76,7 @@ module.exports = (app) ->
     app.delete '/api/profiles/:profile', (req, res) ->
         # Deletes a profile. All previously generated screenshots are still
         # available
-        req.profile.removeAsync()
+        req.params.profile.removeAsync()
         .then ->
             res.status(200).send(
                 'code': 'OK'

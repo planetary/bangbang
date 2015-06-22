@@ -5,20 +5,20 @@ Promise = require 'bluebird'
 
 module.exports = (app) ->
     app.param 'build', (req, res, next, value) ->
-        # populates `app.build`; expects `app.project` to be populated by a previous middleware
+        # populates `req.params.build`; expects `req.params.project` to be populated a-priori
         if not value.match(/^[0-9]+$/)
             # builds must be numbers
             return next('route')
 
         Build.findOneAsync(
-            'project': req.project.id
+            'project': req.params.project.id
             'number': value
         )
         .then (build) ->
             if not build
                 throw new Error("No such build in #{req.project.name}:
                                 #{value}")
-            req.build = build
+            req.params.build = build
             next()
         .catch (err) ->
             console.error(err)
@@ -26,14 +26,14 @@ module.exports = (app) ->
 
 
     app.param 'profile', (req, res, next, value) ->
-        # populates `app.profile`
+        # populates `req.params.profile`
         Profile.findOneAsync(
             'name': value
         )
         .then (profile) ->
             if not profile
                 throw new Error("No such profile: #{value}")
-            req.profile = profile
+            req.params.profile = profile
             next()
         .catch (err) ->
             console.error(err)
@@ -41,14 +41,14 @@ module.exports = (app) ->
 
 
     app.param 'project', (req, res, next, value) ->
-        # populates `app.project`
+        # populates `req.params.project`
         Project.findOneAsync(
             'slug': value
         )
         .then (project) ->
             if not project
                 throw new Error("No such project: #{value}")
-            req.project = project
+            req.params.project = project
             next()
         .catch (err) ->
             console.error(err)
@@ -56,9 +56,9 @@ module.exports = (app) ->
 
 
     app.param 'screenshot', (req, res, next, value) ->
-        # populates either `app.screenshot` or `app.screenshots`, depending on whether `app.build`
-        # was populated by a previous middleware; expects `app.project` to be populated by a
-        # previous middleware
+        # populates either `req.params.screenshot` or `req.params.screenshots`, depending on
+        # whether `req.params.build` was populated by a previous middleware; expects
+        # `req.params.project` to be populated a-priori
 
         if not value.match(/^[0-9a-z-_]*$/) or not value.match(/[^0-9]/)
             # screenshots must be lowercase, url friendly and must contain at least one
@@ -66,10 +66,10 @@ module.exports = (app) ->
             return next('route')
 
         Promise.try ->
-            if req.build
+            if req.params.build
                 Screenshot.findOneAsync(
-                    'project': req.project.id
-                    'build': req.build.number
+                    'project': req.params.project.id
+                    'build': req.params.build.number
                     'slug': value
                 )
                 .then (screenshot) ->
@@ -77,11 +77,11 @@ module.exports = (app) ->
                         throw new Error("No such screenshot in
                                          #{req.project.name} /
                                          #{req.build.number}: #{value}")
-                    req.screenshot = screenshot
+                    req.params.params.screenshot = screenshot
                     next()
             else
                 Screenshot.findAsync(
-                    'project': req.project.id
+                    'project': req.params.project.id
                     'slug': value
                 )
                 .then (screenshots) ->
@@ -89,7 +89,7 @@ module.exports = (app) ->
                         throw new Error("No such screenshot in
                                          #{req.project.name} /
                                          #{req.build.number}: #{value}")
-                    req.screenshots = screenshots
+                    req.params.params.screenshots = screenshots
                     next()
         .catch (err) ->
             console.error(err)

@@ -6,11 +6,11 @@
 module.exports = (app) ->
     app.post '/api/projects/:project', (req, res) ->
         # Creates a new build in a project, returning the new build number
-        number = req.project.head++
-        req.project.saveAsync()
+        number = req.params.project.head++
+        req.params.project.saveAsync()
         .then ->
             Build.createAsync(
-                'project': req.project.id
+                'project': req.params.project.id
                 'number': number
                 'meta': req.body.meta
             )
@@ -38,8 +38,8 @@ module.exports = (app) ->
         # Returns the metadata associated with a build, including a list of all available
         # screenshots
         Screenshot.findAsync(
-            'project': req.project.id
-            'build': req.build.number
+            'project': req.params.project.id
+            'build': req.params.build.number
         )
         .then (screenshots) ->
             res.status(200).send(
@@ -79,7 +79,7 @@ module.exports = (app) ->
 
     app.delete '/api/projects/:project/:build', (req, res) ->
         # Deletes a build, together with all of its screenshots
-        req.build.removeAsync()
+        req.params.build.removeAsync()
         .then ->
             res.status(200).send(
                 'code': 'OK'

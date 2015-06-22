@@ -13,7 +13,7 @@ module.exports = (app) ->
         for profile in req.body.profiles
             if typeof profile is 'string'
                 profiles.push(
-                    'id': profile
+                    'slug': profile
                 )
             else
                 profiles.push(
@@ -22,8 +22,8 @@ module.exports = (app) ->
                 )
 
         Screenshot.createAsync(
-            'project': req.project.id,
-            'build': req.build.number
+            'project': req.params.project.id
+            'build': req.params.build.number
             'slug': req.body.slug
             'target': req.body.target
             'delay': req.body.delay or 0
@@ -54,7 +54,7 @@ module.exports = (app) ->
     app.get '/api/projects/:project/:screenshot', (req, res) ->
         # Returns a list of profiles in which a screenshot is available
         profiles = {}
-        for screenshot in req.screenshots
+        for screenshot in req.params.screenshots
             for profile in screenshot.profiles
                 profiles[profile.slug] = true
 
@@ -68,7 +68,7 @@ module.exports = (app) ->
     app.get '/api/projects/:project/:screenshot/:profile', (req, res) ->
         # Returns a list of builds in which a particular profile of a screenshot is available
         builds = {}
-        for screenshot in req.screenshots
+        for screenshot in req.params.screenshots
             for profile in screenshot.profiles
                 if profile.slug is req.params.profile
                     builds[screenshot.build] = true
@@ -124,7 +124,7 @@ module.exports = (app) ->
     app.get '/api/projects/:project/:build/:screenshot/:profile', (req, res) ->
         # Returns the metadata associated with a particular profile of a particular build of a
         # screenshot, including the S3 URL needed to display the resource
-        for profile in req.screenshot.profiles
+        for profile in req.params.screenshot.profiles
             if profile.slug is req.params.profile
                 return res.status(200).send(
                     'code': 'OK'
@@ -132,12 +132,12 @@ module.exports = (app) ->
                     'data':
                         'width': profile.width
                         'agent': profile.agent
-                        'url': req.screenshot.serve(profile)
+                        'url': req.params.screenshot.serve(profile)
                 )
 
         # profile not found in this build
         res.status(404).send(
             'code': 'NOT_FOUND'
-            'message': "Screenshot #{req.screenshot.slug} does not have a
+            'message': "Screenshot #{req.params.screenshot.slug} does not have a
                         #{req.params.profile} profile"
         )

@@ -42,10 +42,10 @@ module.exports = (app) ->
         # Returns a project's metadata together with a list of all builds and available screenshots
         Promise.try -> [
             Build.findAsync(
-                'project': req.project.id
+                'project': req.params.project.id
             )
             Screenshot.findAsync(
-                'project': req.project.id
+                'project': req.params.project.id
             )
         ]
         .spread (builds, screenshots) ->
@@ -74,7 +74,7 @@ module.exports = (app) ->
         # same but it might be modified in the future)
         req.project.name = req.body.name
         req.project.meta = req.body.meta
-        req.project.saveAsync()
+        req.params.project.saveAsync()
         .then ->
             res.status(200).send(
                 'code': 'OK'
@@ -96,7 +96,7 @@ module.exports = (app) ->
 
     app.delete '/api/projects/:project', (req, res) ->
         # Deletes a project, together with all of its builds and screenshots
-        req.project.removeAsync()
+        req.params.project.removeAsync()
         .then ->
             res.status(200).send(
                 'code': 'OK'
