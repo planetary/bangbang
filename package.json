@@ -16,6 +16,7 @@
     "base64-stream": "^0.1.2",
     "bluebird": "^2.9.25",
     "body-parser": "^1.12.2",
+    "bcrypt": "^0.8.3",
     "brfs": "^1.4.0",
     "browser-sync": "^2.7.10",
     "browserify": "^10.2.4",
