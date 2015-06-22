@@ -46,15 +46,19 @@ call = (method, url, body) ->
             .send(body)
             .accept('json')
             .end (err, res) ->
-                if err
-                    # http error
-                    reject(err)
-                else if res.body.code is 'OK'
+                if res.body.code is 'OK'
                     # looking good (data may or may not be present)
                     resolve(res.body.data)
-                else
+                else if res.body.code
                     # server error; cast into kepler error and raise
                     reject(KeplerError.fromResponseBody(res.body))
+                else if err
+                    # http error; reject directly
+                    reject(err)
+                else
+                    # unknown
+                    reject(new InternalError('INTERNAL', 'An unknown error has ocurred while
+                                                          communicating to the server'))
 
 
 module.exports =
