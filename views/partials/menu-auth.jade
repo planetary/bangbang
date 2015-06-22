@@ -6,7 +6,7 @@ nav.menu
         li.menu--link
             a(href="/pricing")
                 | Pricing
-        li.menu--dropdown.is-active
+        li.menu--dropdown(v-class="is-active: active", v-on="mousedown: toggle")
             span
                 != user.email
             ul.submenu
