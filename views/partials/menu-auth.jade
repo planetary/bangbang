@@ -11,17 +11,11 @@ nav.menu
                 != user.email
             ul.submenu
                 li.submenu--item
-                    a(href="/")
-                        | test
+                    a(href="/account/settings")
+                        | Settings
                 li.submenu--item
-                    a(href="/")
-                        | test
-                li.submenu--item
-                    a(href="/")
-                        | test
-                li.submenu--item
-                    a(href="/")
-                        | test
+                    a(href="/account/security")
+                        | Security
                 li.submenu--item.logout(v-on="mousedown: handle")
                     span
                         | Sign out
