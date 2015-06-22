@@ -74,14 +74,14 @@ Screenshot = mongoose.Schema({
         'required': true
         'enum': ['png', 'gif', 'jpeg']
 
-    # api specified metadata, if any
+    # api-specified metadata, if any
     'meta': mongoose.Schema.Types.Mixed
 
     # all the profiles available for this screenshot
     'profiles':
         'required': true
         'type': [
-            # Either the name of the profile, or the sha1 hash of width + height + agent
+            # Will either be the name of the profile, or the sha1 hash of width + height + agent
             'slug':
                 'type': String
                 'required': true

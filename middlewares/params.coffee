@@ -16,8 +16,7 @@ module.exports = (app) ->
         )
         .then (build) ->
             if not build
-                throw new Error("No such build in #{req.project.name}:
-                                #{value}")
+                throw new Error("No such build in #{req.params.project.name}: #{value}")
             req.params.build = build
             next()
         .catch (err) ->
@@ -74,9 +73,8 @@ module.exports = (app) ->
                 )
                 .then (screenshot) ->
                     if not screenshot
-                        throw new Error("No such screenshot in
-                                         #{req.project.name} /
-                                         #{req.build.number}: #{value}")
+                        throw new Error("No such screenshot in #{req.params.project.name} /
+                                         #{req.params.build.number}: #{value}")
                     req.params.params.screenshot = screenshot
                     next()
             else
@@ -86,9 +84,8 @@ module.exports = (app) ->
                 )
                 .then (screenshots) ->
                     if not screenshots
-                        throw new Error("No such screenshot in
-                                         #{req.project.name} /
-                                         #{req.build.number}: #{value}")
+                        throw new Error("No such screenshot in #{req.params.project.name} /
+                                         #{req.params.build.number}: #{value}")
                     req.params.params.screenshots = screenshots
                     next()
         .catch (err) ->
