@@ -1,13 +1,10 @@
 extends /layouts/default
 
-block header
-    div.g--row
-        div.g--auto
-            h1 Kepler
-
 block content
     main.g--row
         section.g--auto
+            h1.
+                Kepler
             p.g--row.
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce commodo ac magna
                 eget tempus. Integer scelerisque libero vitae libero sagittis varius. Vestibulum
@@ -26,7 +23,7 @@ block content
                 Sed in fringilla urna, vel finibus arcu. Vestibulum posuere molestie arcu in
                 placerat.
 
-        form.g--third.login--homepage(novalidate)
+        form.g--third.login(novalidate)
             h3
                 | Sign up or log in
 

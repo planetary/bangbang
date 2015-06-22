@@ -2,7 +2,7 @@ api = require '../api'
 
 
 module.exports =
-    'el': '.login--homepage'
+    'el': '.login'
 
     'data':
         # data set
@@ -37,14 +37,14 @@ module.exports =
                     'name': @name
                     'password': @password
                 .then (user) ->
-                    console.log('created ' + user)
+                    window.location.reload()
             else
                 # attempt to login as @email
                 api.post '/api/auth',
                     'email': @email
                     'password': @password
                 .then (user) ->
-                    console.log('logged in as ' + user)
+                    window.location.reload()
                 .catch api.ForbiddenError, =>
                     @passwordIncorrect = true
 
