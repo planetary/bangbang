@@ -8,7 +8,7 @@ module.exports = (app) ->
         # populate req.user from req.session.userId
         Promise.try ->
             if req.session.userId
-                User.findOneAsync('id': req.session.userId)
+                User.findOneAsync('_id': req.session.userId)
             else
                 null
         .then (user) ->
