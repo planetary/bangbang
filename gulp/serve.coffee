@@ -14,7 +14,8 @@ module.exports = (gulp, plugins) ->
             'middlewares'
             'models'
             'services'
-            '*.coffee'
+            'app.coffee'
+            'serve.coffee'
         ]
     ports =
         'frontend': 3000

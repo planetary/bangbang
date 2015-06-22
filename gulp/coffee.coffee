@@ -22,7 +22,7 @@ module.exports = (gulp, plugins) ->
         'output': './build/js'
 
 
-    bundler = browserify(paths.build, extend(watchify.args,
+    bundler = browserify(paths.build, extend({}, watchify.args,
         # browserify options
         'extensions': ['.coffee']
         'debug': true
