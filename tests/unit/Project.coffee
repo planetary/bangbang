@@ -1,12 +1,20 @@
 {Build, Project} = require '../../models'
 
-expect = require 'expect'
-mongoose = require 'mongoose'
+{expect} = require 'chai'
+{Model, Error} = require 'mongoose'
 
 
 describe 'Project', ->
     it 'should be a mongoose model', ->
-        expect(Project::).toBeA(mongoose.Model)
+        expect(Project::).to.be.an.instanceof(Model)
+
+    describe '.name', ->
+        it 'should be required', ->
+            Project.createAsync('key': '1234')
+            .then (project) ->
+                throw new Error('Created nameless project')
+            .catch Error.ValidationError, (err) ->
+                expect(err).to.have.deep.property('errors.name.kind', 'required')
 
     describe '.slug', ->
         it 'should use hints when possible', ->
@@ -15,27 +23,27 @@ describe 'Project', ->
                 'slug': 'i-am-a-slug'
             )
             .then (project) ->
-                expect(project.slug).toBe('i-am-a-slug')
+                expect(project.slug).to.equal('i-am-a-slug')
 
         it 'should be generated from the name if no hint provided', ->
             Project.createAsync('name': 'test slug')
             .then (project) ->
-                expect(project.slug).toBe('test-slug')
+                expect(project.slug).to.equal('test-slug')
 
         it 'should always be unique', ->
             Project.createAsync('name': 'test unique')
             .then (project) ->
-                expect(project.slug).toBe('test-unique')
+                expect(project.slug).to.equal('test-unique')
                 Project.createAsync('name': 'test unique')
             .then (project) ->
-                expect(project.slug).toNotBe('test-unique')
+                expect(project.slug).to.not.equal('test-unique')
 
     describe '.key', ->
         it 'should be automatically generated', ->
             Project.createAsync('name': 'test key')
             .then (project) ->
-                expect(project.key).toBeA('string')
-                expect(project.key.length).toBeMoreThan(10)
+                expect(project.key).to.be.a('string')
+                expect(project.key).to.have.length.above(10)
 
     describe '.regenerate', ->
         project = new Project(
@@ -44,12 +52,12 @@ describe 'Project', ->
         )
 
         it 'should be callable', ->
-            expect(project.regenerate).toBeA('function')
+            expect(project.regenerate).to.be.a('function')
 
         it 'should generate a new key', ->
-            expect(project.key).toBe('not-a-generated-key')
+            expect(project.key).to.equal('not-a-generated-key')
             project.regenerate()
-            expect(project.key).toNotBe('not-a-generated-key')
+            expect(project.key).to.not.equal('not-a-generated-key')
 
     describe '.remove', ->
         it 'should also remove all builds', ->
@@ -60,96 +68,9 @@ describe 'Project', ->
                     'number': project.head++
                 )
                 .then (build) ->
-                    expect(build).toNotBe(null)
+                    expect(build).to.exist
                     project.removeAsync()
                     .then ->
-                        Build.findOne('_id': build.id)
+                        Build.findOneAsync('_id': build.id)
                     .then (build) ->
-                        expect(build).toBe(null)
-
-
-
-###    it( 'should correctly collect stats', function() {
-        var shares = Math.floor(Math.random() * 10),
-            likes =  Math.floor(Math.random() * 10),
-            comments =  Math.floor(Math.random() * 10);
-
-        nock( 'http://api.facebook.com' )
-            .filteringPath( /\?.*$/g, '' )
-            .get( '/restserver.php' )
-            .reply( 200, function( url ) {
-                var body = qs.parse( url.replace( '/restserver.php?', '' ) );
-                expect( body ).toNotBe( null );
-                expect( body.urls ).toBe( ACTUAL_PATH );
-                expect( body.method ).toBe( 'links.getStats' );
-                expect( body.format ).toBe( 'json' ); // others not mocked
-                return [ {
-                   'url': ACTUAL_PATH,
-                   'normalized_url': ACTUAL_PATH,
-                   'share_count': shares,
-                   'like_count': likes,
-                   'comment_count': comments,
-                   'total_count': shares + likes + comments,
-                   'click_count': 0,
-                   'comments_fbid': 1337,
-                   'commentsbox_count': 0
-                } ];
-            } );
-
-        var article = Article( { 'db_pid': ARTICLE_PATH } );
-
-        return task( article ).then( function( stats ) {
-            expect( stats ).toNotBe( null );
-            expect( stats.shares ).toBe( shares );
-            expect( stats.likes ).toBe( likes );
-            expect( stats.comments ).toBe( comments );
-        } );
-    } );
-
-
-    it( 'should retry before failing on explicit error', function() {
-        var tries = 5;
-        config.facebook.retryDelay = 0;
-        config.facebook.maxAttempts = tries;
-
-        nock( 'http://api.facebook.com' )
-            .persist()
-            .filteringPath( /\?.*$/g, '' )
-            .get( '/restserver.php' )
-            .reply( 500, function() { tries -= 1; return ''; } );
-
-        var article = Article( { 'db_pid': ARTICLE_PATH } );
-
-        return task( article ).then( function() {
-            throw new Error( 'Did not fail' );
-        } ).fail( function() {
-            expect( tries ).toBe( -1 );
-        } ).fin( function() {
-            nock.cleanAll();
-        } );
-    } );
-
-
-    it( 'should not retry before failing on implicit error', function() {
-        var tries = 5;
-        config.facebook.retryDelay = 0;
-        config.facebook.maxAttempts = tries;
-
-        nock( 'http://api.facebook.com' )
-            .persist()
-            .filteringPath( /\?.*$/g, '' )
-            .get( '/restserver.php' )
-            .reply( 200, function() { tries -= 1; return 'h4x!'; } );
-
-        var article = Article( { 'db_pid': ARTICLE_PATH } );
-
-        return task( article ).then( function() {
-            throw new Error( 'Did not fail' );
-        } ).fail( function() {
-            expect( tries ).toBe( 4 );
-        } ).fin( function() {
-            nock.cleanAll();
-        } );
-    } );
-} );
-###
+                        expect(build).to.not.exist

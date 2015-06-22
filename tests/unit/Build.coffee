@@ -1,13 +1,13 @@
 {Build, Project, Screenshot} = require '../../models'
 
 Promise = require 'bluebird'
-expect = require 'expect'
-mongoose = require 'mongoose'
+{expect} = require 'chai'
+{Model} = require 'mongoose'
 
 
 describe 'Build', ->
     it 'should be a mongoose model', ->
-        expect(Build::).toBeA(mongoose.Model)
+        expect(Build::).to.be.an.instanceof(Model)
 
     describe '.remove', ->
         it 'should also remove all screenshots', ->
@@ -33,9 +33,9 @@ describe 'Build', ->
                         ]
                     , next)
                     .then (screenshot) ->
-                        expect(screenshot).toNotBe(null)
+                        expect(screenshot).to.exist
                         build.removeAsync()
                         .then ->
-                            Screenshot.findOne('_id': screenshot._id)
+                            Screenshot.findOneAsync('_id': screenshot._id)
                         .then (screenshot) ->
-                            expect(screenshot).toBe(null)
+                            expect(screenshot).to.not.exist
