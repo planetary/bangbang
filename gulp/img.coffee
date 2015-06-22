@@ -16,7 +16,7 @@ module.exports = (gulp, plugins) ->
         gulp
             .src(paths.build)
             .pipe(plugins.newer(paths.output))
-            .pipe(plugins.image())
+            .pipe(plugins.imagemin())
             .pipe(gulp.dest(paths.output))
             .pipe(browserSync.reload('stream': true))
             .pipe(plugins.notify('message': 'Image minification complete', 'onLast': true))
