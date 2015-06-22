@@ -84,7 +84,6 @@ Screenshot = mongoose.Schema({
             # Will either be the name of the profile, or the sha1 hash of width + height + agent
             'slug':
                 'type': String
-                'required': true
                 'lowercase': true
                 'minlength': 4
                 'maxlength': 100
@@ -118,7 +117,7 @@ Screenshot = mongoose.Schema({
         'validate':
             'type': 'unique'
             'validator': (values, next) ->
-                profiles = {}
+                profiles = Object.create(null)
                 for value in values
                     if profiles[value.slug]
                         return next(false)
