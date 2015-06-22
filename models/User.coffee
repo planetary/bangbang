@@ -1,6 +1,7 @@
 assimilate = require '../services/assimilate'
 
 bcrypt = require 'bcrypt'
+extend = require 'deep-extend'
 mongoose = require 'mongoose'
 
 
@@ -33,6 +34,17 @@ User = mongoose.Schema({
 })
 
 
+User.method 'jsonify', (extra={}) ->
+    # Returns a json-serializable representation of a user, but with all sensitive information
+    # stripped out, optionally appending `extra` to the result
+    return extend(
+        'name': @name
+        'email': @email
+        'createdAt': @createdAt
+        'updatedAt': @updatedAt
+    , extra)
+
+
 User.pre 'save', (next) ->
     @updatedAt = new Date()
     if @isNew
@@ -53,15 +65,6 @@ User.method 'authenticate', (password, next) ->
     # compares `password` with the password stored in the model and calls `next` with true if they
     # match, otherwise false
     bcrypt.compare(password, @password, next)
-
-
-User.method 'jsonify', ->
-    # Returns a json-serializable representation of a user, but with all sensitive information
-    # stripped out
-    return {
-        'email': @email
-        'name': @name
-    }
 
 
 module.exports = Model = assimilate mongoose.model('User', User)

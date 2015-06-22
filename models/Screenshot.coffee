@@ -136,6 +136,27 @@ Screenshot.method 'key', (profile) ->
     "#{@project.toString()}-#{@build}-#{@slug}-#{profile}"
 
 
+Screenshot.method 'jsonify', (extra={}) ->
+    # Returns a json-serializable representation of a screenshot, but with all sensitive
+    # information stripped out, optionally appending `extra` to the result
+    return extend(
+        'slug': @slug
+        'target': @target
+        'delay': @delay
+        'format': @format
+        'meta': @meta
+        'profiles': {
+            'slug': profile.slug
+            'width': profile.width
+            'height': profile.height
+            'agent': profile.agent
+            'url': @serve(profile)
+        } for profile in @profiles
+        'createdAt': @createdAt
+        'updatedAt': @updatedAt
+    , extra)
+
+
 Screenshot.method 'serve', (profile) ->
     "https://#{config.aws.bucket}.s3.amazonaws.com/#{@key(profile)}"
 

@@ -1,6 +1,7 @@
 assimilate = require '../services/assimilate'
 Build = require './Build'
 
+extend = require 'deeep-extend'
 mongoose = require 'mongoose'
 uuid = require 'uuid'
 
@@ -32,6 +33,18 @@ Project = mongoose.Schema({
     'createdAt': Date
     'updatedAt': Date
 })
+
+
+Project.method 'jsonify', (extra={}) ->
+    # Returns a json-serializable representation of a profile, but with all sensitive information
+    # stripped out, optionally appending `extra` to the result
+    return extend(
+        'name': @name
+        'slug': @slug
+        'meta': @meta
+        'createdAt': @createdAt
+        'updatedAt': @updatedAt
+    , extra)
 
 
 Project.method 'regenerate', ->

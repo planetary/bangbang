@@ -86,14 +86,9 @@ module.exports = (app) ->
         res.status(200).send(
             'code': 'OK'
             'message': 'Success'
-            'data':
-                'target': req.screenshot.target
-                'delay': req.screenshot.delay
-                'format': req.screenshot.format
-                'meta': req.screenshot.meta
-                'profiles': ver.id for ver in req.screenshot.profiles
-                'createdAt': req.project.createdAt
-                'updatedAt': req.project.updatedAt
+            'data': req.params.screenshot.jsonify(
+                'profiles': ver.id for ver in req.params.screenshot.profiles
+            )
         )
 
 

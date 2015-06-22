@@ -1,6 +1,7 @@
 assimilate = require '../services/assimilate'
 Screenshot = require './Screenshot'
 
+extend = require 'deeep-extend'
 mongoose = require 'mongoose'
 
 
@@ -22,6 +23,17 @@ Build = mongoose.Schema({
     'createdAt': Date
     'updatedAt': Date
 })
+
+
+Build.method 'jsonify', (extra={}) ->
+    # Returns a json-serializable representation of a build, but with all sensitive information
+    # stripped out, optionally appending `extra` to the result
+    return extend(
+        'number': @number
+        'meta': @meta
+        'createdAt': @createdAt
+        'updatedAt': @updatedAt
+    , extra)
 
 
 Build.pre 'save', (next) ->

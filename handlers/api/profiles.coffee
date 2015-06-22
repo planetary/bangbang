@@ -37,7 +37,7 @@ module.exports = (app) ->
             res.status(200).send(
                 'code': 'OK'
                 'message': 'Success'
-                'data': profile.name for profile in profiles
+                'data': profile.jsonify() for profile in profiles
             )
         .catch (err) ->
             console.error(err.stack)

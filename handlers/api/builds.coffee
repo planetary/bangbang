@@ -45,11 +45,9 @@ module.exports = (app) ->
             res.status(200).send(
                 'code': 'OK'
                 'message': 'Success'
-                'data':
-                    'meta': req.build.meta
+                'data': req.params.build.jsonify(
                     'screenshots': shot.slug for shot in screenshots
-                    'createdAt': req.build.createdAt
-                    'updatedAt': req.build.updatedAt
+                )
             )
 
 

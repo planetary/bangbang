@@ -52,14 +52,10 @@ module.exports = (app) ->
             res.status(200).send(
                 'code': 'OK'
                 'message': 'Success'
-                'data':
-                    'name': req.project.name
-                    'meta': req.project.meta
-                    'head': req.project.head
+                'data': req.params.project.jsonify(
                     'builds': build.number for build in builds
                     'screenshots': shot.slug for shot in screenshots
-                    'createdAt': req.project.createdAt
-                    'updatedAt': req.project.updatedAt
+                )
             )
         .catch (err) ->
             console.error(err.stack)

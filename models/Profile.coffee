@@ -1,5 +1,6 @@
 assimilate = require '../services/assimilate'
 
+extend = require 'deeep-extend'
 mongoose = require 'mongoose'
 
 
@@ -29,6 +30,19 @@ Profile = mongoose.Schema({
     'createdAt': Date
     'updatedAt': Date
 })
+
+
+Profile.method 'jsonify', (extra={}) ->
+    # Returns a json-serializable representation of a profile, but with all sensitive information
+    # stripped out, optionally appending `extra` to the result
+    return extend(
+        'slug': @slug
+        'width': @width
+        'height': @height
+        'agent': @agent
+        'createdAt': @createdAt
+        'updatedAt': @updatedAt
+    , extra)
 
 
 Profile.pre 'save', (next) ->
