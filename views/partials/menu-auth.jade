@@ -22,6 +22,9 @@ nav.menu
                 li.submenu--item
                     a(href="/")
                         | test
+                li.submenu--item.logout(v-on="mousedown: handle")
+                    span
+                        | Sign out
         li.menu--link(title="Remove this in production")
             a(href="#")
                 | Browsersync go away
