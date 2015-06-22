@@ -4,7 +4,7 @@ plugins = require('gulp-load-plugins')({
     'pattern': ['gulp-*']
 
     # remove from the name of the module when adding it to the context...
-    'replaceString': /\bgulp[\-.]|run[\-.]|merge[\-.]|main[\-.]/
+    'replaceString': /\bgulp[\-.]/
 
     # ...and convert it to camel case
     'camelizePluginName': true
