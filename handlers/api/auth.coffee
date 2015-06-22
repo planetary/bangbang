@@ -1,4 +1,4 @@
-{User} = require '../models'
+{User} = require '../../models'
 
 {Error} = require 'mongoose'
 

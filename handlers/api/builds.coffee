@@ -1,4 +1,4 @@
-{Build, Screenshot} = require '../models'
+{Build, Screenshot} = require '../../models'
 
 {Error} = require 'mongoose'
 

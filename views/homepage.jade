@@ -33,6 +33,7 @@ block content
             input(
                 type="email",
                 placeholder="E-mail address",
+                autocomplete="off",
                 v-model="email",
                 v-validate="required, maxLength: 100, pattern: /.+@.+\\..{2,}/"
                 v-on="focus: focusInput('email'), blur: blurInput('email')"
@@ -50,6 +51,7 @@ block content
             input(
                 type="password",
                 placeholder="Password"
+                autocomplete="off",
                 v-model="password",
                 v-validate="required, minLength: 4, maxLength: 100"
                 v-on="focus: focusInput('password'), blur: blurInput('password')"

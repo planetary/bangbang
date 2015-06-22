@@ -1,4 +1,4 @@
-{Profile} = require '../models'
+{Profile} = require '../../models'
 
 {Error} = require 'mongoose'
 

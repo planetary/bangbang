@@ -1,4 +1,4 @@
-{Build, Project, Screenshot} = require '../models'
+{Build, Project, Screenshot} = require '../../models'
 
 Promise = require 'bluebird'
 {Error} = require 'mongoose'
