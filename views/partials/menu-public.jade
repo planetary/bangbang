@@ -1,12 +1,12 @@
 nav.menu
     ul.menu--links
-        li.menu--link
+        li(class=(page === 'features'? 'menu--link is-active': 'menu--link'))
             a(href="/features")
                 | Features
-        li.menu--link
+        li(class=(page === 'pricing'? 'menu--link is-active': 'menu--link'))
             a(href="/pricing")
                 | Pricing
-        li.menu--link
+        li(class=(page === 'docs'? 'menu--link is-active': 'menu--link'))
             a(href="/docs")
                 | Documentation
         li.menu--link(title="Remove this in production")
