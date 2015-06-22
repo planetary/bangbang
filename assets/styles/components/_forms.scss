@@ -13,7 +13,29 @@ select {
     font-size: $scale-normal;
     line-height: $base-line-height;
     margin-bottom: 1rem;
+
+    + .form--message {
+        margin-top: -1rem;
+        margin-bottom: 1rem;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    &:last-child {
+        margin-bottom: 0;
+    }
 }
+
+.form--message {
+    font-size: $scale-small;
+}
+
+.is-error {
+    color: #f62;
+}
+
 
 legend,
 fieldset {

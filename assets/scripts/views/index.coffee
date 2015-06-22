@@ -1,2 +1,4 @@
 # neither browserify nor brfs is not smart enough to allow doing this automatically
-module.exports = []
+module.exports = [
+    require './homepage'
+]
