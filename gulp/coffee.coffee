@@ -2,7 +2,7 @@ browserify = require 'browserify'
 browserSync = require 'browser-sync'
 buffer = require 'vinyl-buffer'
 source = require 'vinyl-source-stream'
-extend = require 'util-extend'
+extend = require 'deep-extend'
 watchify = require 'watchify'
 stylish = require 'coffeelint-stylish'
 
