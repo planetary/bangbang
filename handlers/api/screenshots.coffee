@@ -51,7 +51,7 @@ module.exports = (app) ->
             )
 
 
-    ###app.get '/api/projects/:project/:screenshot', (req, res) ->
+    app.get '/api/projects/:project/:screenshot', (req, res) ->
         # Returns a list of profiles in which a screenshot is available
         profiles = {}
         for screenshot in req.screenshots
@@ -77,7 +77,7 @@ module.exports = (app) ->
             'code': 'OK'
             'message': 'Success'
             'data': Number(build) for build of builds
-        )###
+        )
 
 
     app.get '/api/projects/:project/:build/:screenshot', (req, res) ->
