@@ -45,6 +45,7 @@
     "gulp-sourcemaps": "^1.5.2",
     "gulp-uglify": "^1.2.0",
     "include-all": "^0.1.6",
+    "jade": "^1.11.0",
     "mock-spawn": "^0.2.5",
     "mockery": "^1.4.0",
     "mongoose": "^4.0.2",
