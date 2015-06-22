@@ -5,6 +5,7 @@ module.exports = (gulp, plugins) ->
     paths =
         'frontend': [
             './build/**/*.*'
+            './views/**/*.jade'
         ]
         'backend': [
             # nodemon won't accept leading ./

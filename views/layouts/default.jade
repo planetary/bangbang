@@ -9,15 +9,22 @@ html
         meta(http-equiv="cleartype", content="on")
         title
             block title
-                | Airframe
+                | Kepler
         link(rel="stylesheet", href="/css/main.css")
         block head
           //- Additional head content (scripts, styles.
 
 body
-    block content
+    div.g--container
+        header
+            block header
+        block content
+        footer
+            block footer
 
     script(src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js")
+    script(src="https://cdn.rawgit.com/visionmedia/page.js/master/page.js")
+    script(src="//cdnjs.cloudflare.com/ajax/libs/vue/0.12.1/vue.min.js")
     script(src="/js/bundle.js")
     block scripts
       //- Additional scripts.

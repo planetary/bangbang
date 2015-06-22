@@ -14,7 +14,7 @@ module.exports = (gulp, plugins) ->
 
     gulp.task 'build:img', 'compresses images and moves them to the build folder', ->
         gulp
-            .src(paths.build )
+            .src(paths.build)
             .pipe(plugins.newer(paths.output))
             .pipe(plugins.image())
             .pipe(gulp.dest(paths.output))
