@@ -53,9 +53,10 @@ module.exports = (app) ->
 
     app.put '/api/projects/:project/:build', (req, res) ->
         # Updates the metadata associated with a build
-        req.build.updateAsync(
+        req.params.build.set(
             'meta': req.body.meta
         )
+        req.params.build.saveAsync()
         .then ->
             res.status(200).send(
                 'code': 'OK'

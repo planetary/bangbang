@@ -68,8 +68,10 @@ module.exports = (app) ->
     app.put '/api/projects/:project', (req, res) ->
         # Updates an existing project's metadata, returning its slug (currently it's always the
         # same but it might be modified in the future)
-        req.project.name = req.body.name
-        req.project.meta = req.body.meta
+        req.params.project.set(
+            'name': req.body.name
+            'meta': req.body.meta
+        )
         req.params.project.saveAsync()
         .then ->
             res.status(200).send(

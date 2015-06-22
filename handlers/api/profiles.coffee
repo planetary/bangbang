@@ -49,11 +49,12 @@ module.exports = (app) ->
 
     app.put '/api/profiles/:profile', (req, res) ->
         # Updates an existing profile
-        req.profile.updateAsync(
+        req.params.profile.set(
             'name': req.body.name
             'width': req.body.width
             'agent': req.body.agent
         )
+        req.params.profile.saveAsync()
         .then ->
             res.status(200).send(
                 'code': 'OK'

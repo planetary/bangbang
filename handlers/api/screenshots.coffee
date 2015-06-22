@@ -94,9 +94,10 @@ module.exports = (app) ->
 
     app.put '/api/projects/:project/:build/:screenshot', (req, res) ->
         # Updates the metadata associated with this screenshot in this particular build
-        req.screenshot.updateAsync(
+        req.params.screenshot.set(
             'meta': req.body.meta
         )
+        req.params.screenshot.saveAsync()
         .then ->
             res.status(200).send(
                 'code': 'OK'
