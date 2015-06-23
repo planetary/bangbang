@@ -1,7 +1,7 @@
 assimilate = require '../services/assimilate'
 Build = require './Build'
 
-extend = require 'deeep-extend'
+extend = require 'deep-extend'
 mongoose = require 'mongoose'
 uuid = require 'uuid'
 

@@ -1,7 +1,7 @@
 assimilate = require '../services/assimilate'
 Screenshot = require './Screenshot'
 
-extend = require 'deeep-extend'
+extend = require 'deep-extend'
 mongoose = require 'mongoose'
 
 

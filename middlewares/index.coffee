@@ -5,17 +5,16 @@ path = require "path"
 fs = require "fs"
 
 
-load = (file) ->
-    # load and register submodule
-    submodule = require("./" + file)
-    submodule(app)
-
-    # export any registered properties
-    for own prop of submodule
-        module.exports[prop] = submodule[prop]
-
-
 module.exports = (app) ->
+    load = (file) ->
+        # load and register submodule
+        submodule = require("./" + file)
+        submodule(app)
+
+        # export any registered properties
+        for own prop of submodule
+            module.exports[prop] = submodule[prop]
+
     for file in fs.readdirSync(__dirname)
         stat = fs.statSync(path.join(__dirname, file))
         if stat.isDirectory()

@@ -1,6 +1,6 @@
 assimilate = require '../services/assimilate'
 
-extend = require 'deeep-extend'
+extend = require 'deep-extend'
 mongoose = require 'mongoose'
 
 
