@@ -8,11 +8,16 @@ Profile = mongoose.Schema({
     'slug':
         'type': String
         'required': true
-        'lowercase': true
         'unique': true
         'minlength': 4
         'maxlength': 100
+        'lowercase': true
         'match': /^[a-z0-9\-\.]+$/
+        'validate':
+            'type': 'unique'
+            'validator': (value, next) ->
+                Model.findOne 'slug': @slug, (err, profile) =>
+                    next(not err? and (not profile? or profile.id is @id))
 
     'width':
         'type': Number
