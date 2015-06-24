@@ -74,3 +74,33 @@ describe 'Project', ->
                         Build.findOneAsync('_id': build.id)
                     .then (build) ->
                         expect(build).to.not.exist
+
+    describe '.createdAt', ->
+        it 'should not be populated before first save', ->
+            project = new Project('name': 'test createdAt')
+            expect(project.createdAt).to.not.exist
+
+        it 'should be populated only on the first save', ->
+            Project.createAsync('name': 'test createdAt')
+            .then (project) ->
+                expect(project.createdAt).to.be.an.instanceof(Date)
+                expect(Date.now() - project.createdAt.getTime()).to.be.below(100)
+                project.createdAt = new Date().setTime(0)
+                project.saveAsync()
+            .spread (project) ->
+                expect(project.createdAt.getTime()).to.be.equal(0)
+
+    describe '.updatedAt', ->
+        it 'should not be populated before first save', ->
+            project = new Project('name': 'test updatedAt')
+            expect(project.updatedAt).to.not.exist
+
+        it 'should be populated on every save', ->
+            Project.createAsync('name': 'test updatedAt')
+            .then (project) ->
+                expect(project.updatedAt).to.be.an.instanceof(Date)
+                expect(Date.now() - project.updatedAt.getTime()).to.be.below(100)
+                project.updatedAt = new Date().setTime(0)
+                project.saveAsync()
+            .spread (project) ->
+                expect(Date.now() - project.updatedAt.getTime()).to.be.below(100)

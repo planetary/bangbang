@@ -95,3 +95,41 @@ describe 'User', ->
                 user.authenticateAsync('1234')
             .then (match) ->
                 expect(match).to.be.false
+
+    describe '.createdAt', ->
+        it 'should not be populated before first save', ->
+            user = new User('email': 'test+created@planetary.io')
+            expect(user.createdAt).to.not.exist
+
+        it 'should be populated only on the first save', ->
+            User.createAsync(
+                'email': 'john@doe.com'
+                'password': 12345678
+                'name': 'test createdAt'
+            )
+            .then (user) ->
+                expect(user.createdAt).to.be.an.instanceof(Date)
+                expect(Date.now() - user.createdAt.getTime()).to.be.below(100)
+                user.createdAt = new Date().setTime(0)
+                user.saveAsync()
+            .spread (user) ->
+                expect(user.createdAt.getTime()).to.be.equal(0)
+
+    describe '.updatedAt', ->
+        it 'should not be populated before first save', ->
+            user = new User('email': 'test+created@planetary.io')
+            expect(user.updatedAt).to.not.exist
+
+        it 'should be populated on every save', ->
+            User.createAsync(
+                'email': 'john@doe.com'
+                'password': 12345678
+                'name': 'test createdAt'
+            )
+            .then (user) ->
+                expect(user.updatedAt).to.be.an.instanceof(Date)
+                expect(Date.now() - user.updatedAt.getTime()).to.be.below(100)
+                user.updatedAt = new Date().setTime(0)
+                user.saveAsync()
+            .spread (user) ->
+                expect(Date.now() - user.updatedAt.getTime()).to.be.below(100)

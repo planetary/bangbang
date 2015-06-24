@@ -39,3 +39,53 @@ describe 'Build', ->
                             Screenshot.findOneAsync('_id': screenshot._id)
                         .then (screenshot) ->
                             expect(screenshot).to.not.exist
+
+    describe '.createdAt', ->
+        it 'should not be populated before first save', ->
+            Project.createAsync('name': 'test createdAt')
+            .then (project) ->
+                build = new Build(
+                    'project': project
+                    'number': project.head++
+                )
+                expect(build.createdAt).to.not.exist
+
+        it 'should be populated only on the first save', ->
+            Project.createAsync('name': 'test createdAt')
+            .then (project) ->
+                Build.createAsync(
+                    'project': project
+                    'number': project.head++
+                )
+            .then (build) ->
+                expect(build.createdAt).to.be.an.instanceof(Date)
+                expect(Date.now() - build.createdAt.getTime()).to.be.below(100)
+                build.createdAt = new Date().setTime(0)
+                build.saveAsync()
+            .spread (build) ->
+                expect(build.createdAt.getTime()).to.be.equal(0)
+
+    describe '.updatedAt', ->
+        it 'should not be populated before first save', ->
+            Project.createAsync('name': 'test updatedAt')
+            .then (project) ->
+                build = new Build(
+                    'project': project
+                    'number': project.head++
+                )
+                expect(build.updatedAt).to.not.exist
+
+        it 'should be populated on every save', ->
+            Project.createAsync('name': 'test')
+            .then (project) ->
+                Build.createAsync(
+                    'project': project
+                    'number': project.head++
+                )
+            .then (build) ->
+                expect(build.updatedAt).to.be.an.instanceof(Date)
+                expect(Date.now() - build.updatedAt.getTime()).to.be.below(100)
+                build.updatedAt = new Date().setTime(0)
+                build.saveAsync()
+            .spread (build) ->
+                expect(Date.now() - build.updatedAt.getTime()).to.be.below(100)
