@@ -9,6 +9,7 @@ describe 'Build', ->
     it 'should be a mongoose model', ->
         expect(Build::).to.be.an.instanceof(Model)
 
+
     describe '.project', ->
         it 'should be required', ->
             Build.createAsync({})
@@ -16,6 +17,7 @@ describe 'Build', ->
                 throw new Error('Created build without a project')
             .catch Error.ValidationError, (err) ->
                 expect(err).to.have.deep.property('errors.project.kind', 'required')
+
 
     describe '.remove', ->
         it 'should also remove all screenshots', ->
@@ -48,6 +50,7 @@ describe 'Build', ->
                         .then (screenshot) ->
                             expect(screenshot).to.not.exist
 
+
     describe '.jsonify', ->
         it 'should be a function', ->
             build = new Build()
@@ -60,6 +63,7 @@ describe 'Build', ->
         it 'should include user-defined metadata', ->
             build = new Build('meta': 'theAnswer': 42)
             expect(build.jsonify()).to.have.deep.property('meta.theAnswer', 42)
+
 
     describe '.createdAt', ->
         it 'should not be populated before first save', ->
@@ -85,6 +89,7 @@ describe 'Build', ->
                 build.saveAsync()
             .spread (build) ->
                 expect(build.createdAt.getTime()).to.be.equal(0)
+
 
     describe '.updatedAt', ->
         it 'should not be populated before first save', ->

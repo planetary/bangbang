@@ -8,6 +8,7 @@ describe 'Project', ->
     it 'should be a mongoose model', ->
         expect(Project::).to.be.an.instanceof(Model)
 
+
     describe '.name', ->
         it 'should be required', ->
             Project.createAsync('key': '1234')
@@ -15,6 +16,7 @@ describe 'Project', ->
                 throw new Error('Created nameless project')
             .catch Error.ValidationError, (err) ->
                 expect(err).to.have.deep.property('errors.name.kind', 'required')
+
 
     describe '.slug', ->
         it 'should use hints when possible', ->
@@ -38,12 +40,14 @@ describe 'Project', ->
             .then (project) ->
                 expect(project.slug).to.not.equal('test-unique')
 
+
     describe '.key', ->
         it 'should be automatically generated', ->
             Project.createAsync('name': 'test key')
             .then (project) ->
                 expect(project.key).to.be.a('string')
                 expect(project.key).to.have.length.above(10)
+
 
     describe '.regenerate', ->
         project = new Project(
@@ -58,6 +62,7 @@ describe 'Project', ->
             expect(project.key).to.equal('not-a-generated-key')
             project.regenerate()
             expect(project.key).to.not.equal('not-a-generated-key')
+
 
     describe '.remove', ->
         it 'should also remove all builds', ->
@@ -75,6 +80,7 @@ describe 'Project', ->
                     .then (build) ->
                         expect(build).to.not.exist
 
+
     describe '.createdAt', ->
         it 'should not be populated before first save', ->
             project = new Project('name': 'test createdAt')
@@ -89,6 +95,7 @@ describe 'Project', ->
                 project.saveAsync()
             .spread (project) ->
                 expect(project.createdAt.getTime()).to.be.equal(0)
+
 
     describe '.updatedAt', ->
         it 'should not be populated before first save', ->

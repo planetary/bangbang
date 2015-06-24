@@ -9,6 +9,7 @@ describe 'Profile', ->
     it 'should be a mongoose model', ->
         expect(Profile::).to.be.an.instanceof(Model)
 
+
     describe '.slug', ->
         it 'should be required', ->
             Profile.createAsync('width': 1000)
@@ -44,6 +45,7 @@ describe 'Profile', ->
             .catch Error.ValidationError, (err) ->
                 expect(err).to.have.deep.property('errors.slug.kind', 'regexp')
 
+
     describe '.jsonify', ->
         it 'should be a function', ->
             profile = new Profile()
@@ -67,6 +69,7 @@ describe 'Profile', ->
             ).jsonify()
             expect(spec).to.have.deep.property('agent', 'watchOS')
 
+
     describe '.createdAt', ->
         it 'should not be populated before first save', ->
             profile = new Profile(
@@ -89,6 +92,7 @@ describe 'Profile', ->
                 profile.saveAsync()
             .spread (profile) ->
                 expect(profile.createdAt.getTime()).to.be.equal(0)
+
 
     describe '.updatedAt', ->
         it 'should not be populated before first save', ->

@@ -9,6 +9,7 @@ describe 'User', ->
     it 'should be a mongoose model', ->
         expect(User::).to.be.an.instanceof(Model)
 
+
     describe '.email', ->
         it 'should be required', ->
             User.createAsync('name': 'John')
@@ -33,6 +34,7 @@ describe 'User', ->
                     throw new Error('Created user account with duplicate e-mail')
             .catch Error.ValidationError, (err) ->
                 expect(err).to.have.deep.property('errors.email.kind', 'unique')
+
 
     describe '.password', ->
         it 'should be required', ->
@@ -73,6 +75,7 @@ describe 'User', ->
             .spread (user) ->
                 expect(user.password).to.equal(oldPassword)
 
+
     describe '.authenticate', ->
         it 'should accept correct passwords', ->
             User.createAsync(
@@ -96,6 +99,7 @@ describe 'User', ->
             .then (match) ->
                 expect(match).to.be.false
 
+
     describe '.createdAt', ->
         it 'should not be populated before first save', ->
             user = new User('email': 'test+created@planetary.io')
@@ -114,6 +118,7 @@ describe 'User', ->
                 user.saveAsync()
             .spread (user) ->
                 expect(user.createdAt.getTime()).to.be.equal(0)
+
 
     describe '.updatedAt', ->
         it 'should not be populated before first save', ->
