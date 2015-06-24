@@ -1,4 +1,5 @@
 assimilate = require '../services/assimilate'
+config = require '../config'
 
 bcrypt = require 'bcrypt'
 extend = require 'deep-extend'
@@ -61,7 +62,7 @@ User.pre 'save', (next) ->
         next()
     else
         # password looks brand new, hash it
-        bcrypt.hash @password, 10, (err, hash) =>
+        bcrypt.hash @password, config.server.salt, (err, hash) =>
             if not err
                 @password = hash
             next(err)
