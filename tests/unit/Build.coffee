@@ -9,6 +9,14 @@ describe 'Build', ->
     it 'should be a mongoose model', ->
         expect(Build::).to.be.an.instanceof(Model)
 
+    describe '.project', ->
+        it 'should be required', ->
+            Build.createAsync({})
+            .then (build) ->
+                throw new Error('Created build without a project')
+            .catch Error.ValidationError, (err) ->
+                expect(err).to.have.deep.property('errors.project.kind', 'required')
+
     describe '.remove', ->
         it 'should also remove all screenshots', ->
             Project.createAsync('name': 'test')
