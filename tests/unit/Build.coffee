@@ -11,7 +11,7 @@ describe 'Build', ->
 
     describe '.remove', ->
         it 'should also remove all screenshots', ->
-            Project.createAsync('name': 'test build')
+            Project.createAsync('name': 'test')
             .then (project) ->
                 Build.createAsync(
                     'project': project.id
@@ -39,6 +39,19 @@ describe 'Build', ->
                             Screenshot.findOneAsync('_id': screenshot._id)
                         .then (screenshot) ->
                             expect(screenshot).to.not.exist
+
+    describe '.jsonify', ->
+        it 'should be a function', ->
+            build = new Build()
+            expect(build.jsonify).to.be.a('function')
+
+        it 'should include the build number', ->
+            build = new Build('number': 5)
+            expect(build.jsonify()).to.have.property('number', 5)
+
+        it 'should include user-defined metadata', ->
+            build = new Build('meta': 'theAnswer': 42)
+            expect(build.jsonify()).to.have.deep.property('meta.theAnswer', 42)
 
     describe '.createdAt', ->
         it 'should not be populated before first save', ->
