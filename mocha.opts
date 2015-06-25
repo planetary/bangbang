@@ -1,4 +1,4 @@
---require coffee-script/register
---compilers coffee:coffee-script
+--compilers coffee:coffee-script/register
+--require ./register-coverage.coffee
 
 tests/index.coffee

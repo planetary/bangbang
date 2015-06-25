@@ -2,6 +2,9 @@
 .migrate
 .migrate-development
 
+# coverage files
+coverage
+
 # compiled resources
 build
 
