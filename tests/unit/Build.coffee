@@ -2,7 +2,7 @@
 
 Promise = require 'bluebird'
 {expect} = require 'chai'
-{Model} = require 'mongoose'
+{Model, Error} = require 'mongoose'
 
 
 describe 'Build', ->
