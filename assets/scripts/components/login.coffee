@@ -11,7 +11,7 @@ module.exports =
         'password': ''
         'password2': ''
         # extra validation
-        'emailAvailable': false
+        'emailAvailable': true
         'passwordMismatch': false
         'passwordIncorrect': false
         'emailError': false
