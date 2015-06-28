@@ -1,0 +1,8 @@
+a(
+    v-class="\
+        menu--item-left: align === 'left', \
+        menu--item-right: align !== 'left', \
+        is-active: active",
+    v-attr="title: title, href: href"
+)
+    content(v-text="caption")

@@ -17,39 +17,33 @@
     text-decoration: none;
 }
 
-.menu--links {
-    float: right;
-    padding: 0;
-    margin: 0;
-    list-style: none;
-}
-
-.menu--link {
+.menu--item-left,
+.menu--item-right {
     float: left;
-    margin: 0;
-    padding: 0;
 
-    > a {
-        display: block;
-        height: 4rem;
-        line-height: 4rem;
-        color: white;
-        text-decoration: none;
-        padding: 0 2rem;
-    }
+    height: 4rem;
+    line-height: 4rem;
+    color: white;
+    text-decoration: none;
+    padding: 0 2rem;
 
-    &.is-active > a {
+    &.is-active {
         background: darken($navy, 5%);
     }
 }
 
 
-.menu--dropdown {
-    float: left;
-    margin: 0;
-    padding: 0;
+.menu--item-right {
+    float: right;
+}
 
-    > span {
+
+.menu--dropdown-left,
+.menu--dropdown-right {
+    float: left;
+    overflow: visible;
+
+    .menu--dropdown-title {
         display: block;
         height: 4rem;
         line-height: 4rem;
@@ -58,49 +52,29 @@
         padding: 0 2rem;
     }
 
-    .submenu {
+    .menu--dropdown-item {
         display: none;
-    }
 
-    &.is-active {
-        > span {
-            background: darken($navy, 5%);
-        }
-
-        .submenu {
-            display: block;
-        }
-    }
-}
-
-
-.submenu {
-    width: 100%;
-    background: darken($navy, 5%);
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    line-height: $base-line-height;
-}
-
-
-.submenu--item {
-    margin: 0;
-    padding: 0;
-
-    > a,
-    > span {
-        display: block;
+        background: darken($navy, 5%);
         padding: 0.2rem 2rem;
         color: white;
         text-decoration: none;
         cursor: pointer;
+
+        &:hover {
+            background: $gray-lighter;
+            color: $black;
+        }
     }
 
-    &:hover a,
-    &:hover span {
-        background: $gray-lighter;
-        color: $black;
+    &.is-active {
+        .menu--dropdown-title {
+            background: darken($navy, 5%);
+        }
+
+        .menu--dropdown-item {
+            display: block;
+        }
     }
 }
 

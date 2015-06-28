@@ -1,0 +1,11 @@
+div(
+    v-class="\
+        menu--dropdown-left: align === 'left', \
+        menu--dropdown-right: align !== 'left', \
+        is-active: active",
+    v-attr="title: title"
+    v-on="click: toggle"
+)
+    .menu--dropdown-title(v-text="caption")
+    content
+

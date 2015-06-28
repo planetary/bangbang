@@ -1,14 +1,11 @@
-components = require './components'
-
+bulk = require 'bulk-require'
 validator = require 'vue-validator'
 
+# register components and vendor scripts
+bulk(__dirname, 'components/**/*.coffee')
+bulk(__dirname, 'vendor/**/*.coffee')
 
 Vue.use(validator)
 
 jQuery ($) ->
-    # this is a bit horrible atm, but until vue-router is ready, is as good a solution as all the
-    # available alternatives
-    for own key of components
-        component = components[key]
-        if $(component.el).length
-            new Vue(component)
+    new Vue('el': 'body')

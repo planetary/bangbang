@@ -1,4 +1,4 @@
-api = require '../api'
+api = require 'scripts/api'
 
 
 module.exports =

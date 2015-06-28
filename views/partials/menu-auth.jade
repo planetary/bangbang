@@ -1,28 +1,23 @@
-nav.menu
-    ul.menu--links
-        li.menu--link
-            a(href="/features")
-                | Features
-        li.menu--link
-            a(href="/pricing")
-                | Pricing
-        li.menu--dropdown(v-class="is-active: active", v-on="mousedown: toggle")
-            span
-                != user.email
-            ul.submenu
-                li.submenu--item
-                    a(href="/account/settings")
-                        | Settings
-                li.submenu--item
-                    a(href="/account/security")
-                        | Security
-                li.submenu--item.logout(v-on="mousedown: handle")
-                    span
-                        | Sign out
-        li.menu--link(title="Remove this in production")
-            a(href="#")
-                | Browsersync go away
-
-    a.menu--logo(href="/")
+menu
+    menu-item(href="/")
         | Kepler
 
+    menu-item(href="/test")
+        | Project
+
+    menu-dropdown(
+        align="right",
+        caption="MyNameHere"
+    )
+        menu-dropdown-item(href="/account/settings")
+            | Settings
+        menu-dropdown-item(href="/account/security")
+            | Security
+        menu-dropdown-item
+            | Sign out
+
+    menu-item(
+        align="right",
+        title="Remove this in production"
+    )
+        | Browsersync go away

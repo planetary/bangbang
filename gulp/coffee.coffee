@@ -24,11 +24,12 @@ module.exports = (gulp, plugins) ->
 
     bundler = browserify(paths.build, extend({}, watchify.args,
         # browserify options
-        'extensions': ['.coffee']
+        'extensions': ['.coffee', '.jade']
+        'paths': ['./node_modules', './assets/']
         'debug': true
         'fullPaths': true
         'insertGlobals': true
-        'transform': ['coffeeify', 'brfs', 'bulkify']
+        'transform': ['coffeeify', 'jadeify', 'brfs', 'bulkify']
     ))
 
     bundle = ->
