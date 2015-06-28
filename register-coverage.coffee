@@ -10,6 +10,7 @@ coffeeCoverage.register(
         'gulp'
         'node_modules'
         'tests'
+        'register-coverage.coffee'
     ]
     'coverageVar': istanbulVar
     'initAll': true
