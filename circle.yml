@@ -1,0 +1,22 @@
+machine:
+    node:
+        version: 0.12.4
+dependencies:
+    override:
+        - npm install
+test:
+    override:
+        - node_modules/.bin/gulp lint
+        - node_modules/.bin/gulp build:
+            environment:
+                NODE_ENV: testing
+        - node_modules/.bin/gulp test
+deployment:
+    staging:
+        branch: staging
+        commands:
+            - ssh kepler@clients.io '~/staging/redeploy'
+    testing:
+        branch: development
+        commands:
+            - ssh kepler@clients.io '~/testing/redeploy'
