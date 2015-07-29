@@ -83,8 +83,6 @@ exports.up = function(next) {
             'width': 320,
             'height': 480,
             'agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 5_1 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1 Mobile/9B179 Safari/7534.48.3'
-        }, {
-            'slug': 'default'
         }
     ])
     .then( function( models ) { next(); } )
