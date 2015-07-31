@@ -16,7 +16,9 @@ module.exports = (gulp, plugins) ->
             path.resolve(__dirname, '../tests/integration/**/*.coffee')
         ]
     config =
-        'require': ['../../register-coverage']
+        'require': [
+            path.resolve(__dirname, '../register-coverage')
+        ]
 
 
     gulp.task 'test:unit', 'runs unit tests using mocha', ->

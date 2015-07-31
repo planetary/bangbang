@@ -6,7 +6,7 @@ machine:
         DISABLE_NOTIFIER: true
 dependencies:
     pre:
-        - gem install scss-lint
+        - gem install scss_lint
     override:
         - npm install
 test:

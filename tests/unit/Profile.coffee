@@ -31,8 +31,8 @@ describe 'Profile', ->
             .catch Error.ValidationError, (err) ->
                 expect(err).to.have.deep.property('errors.slug.kind', 'unique')
 
-        it 'should be 4 characters minimum', ->
-            Profile.createAsync('slug': 'and')
+        it 'should be 2 characters minimum', ->
+            Profile.createAsync('slug': 'a')
             .then (user) ->
                 throw new Error('Created profile with a short slug')
             .catch Error.ValidationError, (err) ->
